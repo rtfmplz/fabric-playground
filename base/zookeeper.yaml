@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+
+  zookeeper1:
+    image: hyperledger/fabric-zookeeper:0.4.14
+    container_name: zookeeper
+    hostname: zookeeper1
+    environment:
+      - TZ=Asia/Seoul
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888

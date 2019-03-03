@@ -1,0 +1,85 @@
+version: "2"
+
+networks:
+  byfn:
+
+
+##########################################
+services:
+  cli:
+    extends:
+      file: base/cli.yaml
+      service: cli
+    container_name: cli
+    depends_on:
+      - orderer1.ordererorg
+      - peer1.org1
+      - peer2.org1
+    networks:
+      - byfn
+
+##########################################
+  orderer1.ordererorg:
+    extends:
+      file: base/orderer.yaml
+      service: orderer1
+    container_name: orderer1
+    depends_on:
+      - kafka1
+    networks:
+      - byfn
+
+  kafka1:
+    extends:
+      file: base/kafka.yaml
+      service: kafka1
+    container_name: kafka1
+    depends_on:
+      - zookeeper1
+    networks:
+      - byfn
+
+  zookeeper1:
+    extends:
+      file: base/zookeeper.yaml
+      service: zookeeper1
+    container_name: zookeeper1
+    networks:
+      - byfn
+
+##########################################
+  peer1.org1:
+    extends:
+      file: base/peer.yaml
+      service: peer1
+    container_name: peer1
+    depends_on:
+      - couchdb1
+    networks:
+      - byfn
+
+  peer2.org1:
+    extends:
+      file: base/peer.yaml
+      service: peer2
+    container_name: peer2
+    depends_on:
+      - couchdb1
+    networks:
+      - byfn
+
+  couchdb1:
+    extends:
+      file: base/couchdb.yaml
+      service: couchdb1
+    container_name: couchdb1
+    networks:
+      - byfn
+
+  couchdb2:
+    extends:
+      file: base/couchdb.yaml
+      service: couchdb2
+    container_name: couchdb2
+    networks:
+      - byfn

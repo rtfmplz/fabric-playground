@@ -1,0 +1,20 @@
+version: "2"
+
+services:
+
+  kafka1:
+    image: hyperledger/fabric-kafka:0.4.14
+    container_name: kafka
+    hostname: kafka
+    environment:
+      - TZ=Asia/Seoul
+      - KAFKA_ADVERTISED_HOST_NAME=kafka1
+      - KAFKA_ADVERTISED_PORT=9092
+      - KAFKA_MESSAGE_MAX_BYTES=103809024 # 99 * 1024 * 1024 Byte
+      - KAFKA_REPLICA_FETCH_MAX_BYTES=103809024 # 99 * 1024 * 1024 Byte
+      - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+      - KAFKA_BROKER_ID=1
+      - KAFKA_MIN_INSYNC_REPLICAS=1
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181
+      # - KAFKA_REPLICA_FETCH_RESPONSE_MAX_BYTES=${KAFKA_REPLICA_FETCH_RESPONSE_MAX_BYTES}
