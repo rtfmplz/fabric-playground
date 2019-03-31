@@ -1,7 +1,7 @@
 version: "2"
 
 networks:
-  byfn:
+  basic:
 
 
 ##########################################
@@ -16,7 +16,7 @@ services:
       - peer1.org1
       - peer2.org1
     networks:
-      - byfn
+      - basic
 
 ##########################################
   orderer1.ordererorg:
@@ -27,7 +27,7 @@ services:
     depends_on:
       - kafka1
     networks:
-      - byfn
+      - basic
 
   kafka1:
     extends:
@@ -37,7 +37,7 @@ services:
     depends_on:
       - zookeeper1
     networks:
-      - byfn
+      - basic
 
   zookeeper1:
     extends:
@@ -45,7 +45,7 @@ services:
       service: zookeeper1
     container_name: zookeeper1
     networks:
-      - byfn
+      - basic
 
 ##########################################
   peer1.org1:
@@ -56,7 +56,7 @@ services:
     depends_on:
       - couchdb1
     networks:
-      - byfn
+      - basic
 
   peer2.org1:
     extends:
@@ -66,7 +66,7 @@ services:
     depends_on:
       - couchdb1
     networks:
-      - byfn
+      - basic
 
   couchdb1:
     extends:
@@ -74,7 +74,7 @@ services:
       service: couchdb1
     container_name: couchdb1
     networks:
-      - byfn
+      - basic
 
   couchdb2:
     extends:
@@ -82,4 +82,4 @@ services:
       service: couchdb2
     container_name: couchdb2
     networks:
-      - byfn
+      - basic

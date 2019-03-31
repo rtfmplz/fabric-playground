@@ -8,15 +8,6 @@
 curl -sSL http://bit.ly/2ysbOFE | bash -s 1.3.0
 ```
 
-tool을 사용하기 위해서 아래 명령을 수행한다.
-
-```bash
-cat << EOF > ~/.bash_profile
-export FABRIC_SAMPLES=~/git/fabric-samples/
-export PATH=PATH:$FABRIC_SAMPLES/bin
-EOF
-```
-
 ## BootStrap Fabric Network
 
 1. Create MSP using cryptogen
