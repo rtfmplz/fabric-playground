@@ -1,14 +1,17 @@
 version: "2"
 
-  services:
+networks:
+  basic:
+
+services:
+  fabric-ca:
     image: hyperledger/fabric-ca
     container_name: fabric-ca
-
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=fabric-ca
-      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pe
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/7b492933d5db6091ad047c5bfe9a2d64598722db858b6392c40318140e55d5c6_sk
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1-cert.pe
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
     ports:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start -b admin:admin'

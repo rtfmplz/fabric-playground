@@ -47,6 +47,7 @@ docker exec -it cli /bin/bash
 ```
 
 ```bash
+peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx
 peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
@@ -55,6 +56,7 @@ peer channel join -b ch1.block
 ```
 
 ```bash
+peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx
 peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
@@ -86,6 +88,87 @@ peer chaincode invoke -o orderer1.ordererorg:7050 --tls true --cafile $ORDERER_O
 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 ```
 
-Or 
+> CouchDB 
+>
+> * [couchdb1](http://localhost:5984/_utils/)
 
-* [couchdb1](http://localhost:5984/_utils/)
+## Attach Fabric-CA
+
+1. Update fabric-ca.yaml
+
+> 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./base/fabric-ca.yaml 파일의 
+> FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
+
+```
+tree crypto/peerOrganizations/org1/ca
+crypto/peerOrganizations/org1/ca
+├── 0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
+└── ca.org1-cert.pem
+```
+
+2. Run Fabric-CA container
+
+```
+docker-compose -f ./base/fabric-ca.yaml up -d
+```
+
+## Fabcar
+
+> Fabcar 예제가 Fabric-CA 를 통해서 register, enroll 하는 과정을 담고 있기때문에 예제로 사용
+
+1. install & instantiate & invoke Fabcar
+
+```bash
+docker exec -it cli /bin/bash
+```
+
+```
+peer chaincode install -n fabcar -v 1.0 -p github.com/chaincode/fabcar/go/
+```
+
+```
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')"
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')" --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+```
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}'
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}' --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+```
+peer chaincode query -C ch1 -n fabcar -c '{"Args":["queryAllCars"]}'
+peer chaincode query -C ch1 -n fabcar -c '{"Args":["queryCar", "CAR4"]}'
+
+```
+
+2. npm install
+
+> fabcar 폴더에서 진행
+
+```
+npm install npm@5.6.0 -g
+npm install
+```
+
+3. register & enroll
+
+```
+node enrollAdmin.js
+```
+
+```
+node registerUser.js
+```
+
+---
+
+[FIXME] basic network는 되는데 왜 이건 안되지......
+
+```
+node query.js
+```
+
+```
+node invoke.js
+```

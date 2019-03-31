@@ -1,3 +1,4 @@
 crypto/
+crypto-config/
 *.block
 *.tx
