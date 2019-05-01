@@ -1,43 +1,47 @@
 ---
 Organizations:
-  - &OrdererOrg
-    Name: OrdererOrg
-    ID: OrdererOrgMSP
-    MSPDir: crypto/ordererOrganizations/ordererorg/msp
-  - &Org1
-    Name: Org1
-    ID: Org1MSP
-    MSPDir: crypto/peerOrganizations/org1/msp
-    AnchorPeers:
-      - Host: peer1.org1
-        Port: 7051
+
+    - &OrdererOrg
+
+        Name: OrdererOrg
+        ID: OrdererOrgMSP
+        MSPDir: crypto/ordererOrganizations/ordererorg/msp
+
+    - &Org1
+    
+        Name: Org1
+        ID: Org1MSP
+        MSPDir: crypto/peerOrganizations/org1/msp
+        AnchorPeers:
+            - Host: peer1.org1
+              Port: 7051
 
 Capabilities:
-  Channel: &ChannelCapabilities
-    V1_3: true
-  Orderer: &OrdererCapabilities
-    V1_1: true
-  Application: &ApplicationCapabilities
-    V1_3: true
-    V1_2: false
-    V1_1: false
+    Channel: &ChannelCapabilities
+        V1_3: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_3: true
+        V1_2: false
+        V1_1: false
 
 Application: &ApplicationDefaults
-  Organizations:
+    Organizations:
 
 Orderer: &OrdererDefaults
-  OrdererType: kafka
-  Addresses:
-    - orderer1.ordererorg:7050
-  BatchTimeout: 1s
-  BatchSize:
-    MaxMessageCount: 30
-    AbsoluteMaxBytes: 99 MB
-    PreferredMaxBytes: 512 KB
-  Kafka:
-    Brokers:
-      - kafka1:9092
-  Organizations:
+    OrdererType: kafka
+    Addresses:
+        - orderer1.ordererorg:7050
+    BatchTimeout: 1s
+    BatchSize:
+        MaxMessageCount: 30
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - kafka1:9092
+    Organizations:
 
 # Channel: &ChannelDefaults
 #   Capabilities:
@@ -48,23 +52,25 @@ Orderer: &OrdererDefaults
 # 컨소시엄의 구성원과 Orderer 조직을 정의하는 OrgsOrdererGenesis와 채널 생성을 정의하는 OrgsChannel로 나뉨
 # 위의 설정들을 참조해서 작성됨
 Profiles:
-  OrgsOrdererGenesis:
-    # <<: *ChannelDefaults
-    Orderer:
-      <<: *OrdererDefaults
-      Organizations:
-        - *OrdererOrg
-      Capabilities:
-        <<: *OrdererCapabilities
-    Consortiums:
-      OrgConsortium:
-        Organizations:
-          - *Org1
-  OrgsChannel:
-    Consortium: OrgConsortium
-    Application:
-      <<: *ApplicationDefaults
-      Organizations:
-        - *Org1
-      Capabilities:
-        <<: *ApplicationCapabilities
+
+    OrgsOrdererGenesis:
+        # <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            OrgConsortium:
+                Organizations:
+                    - *Org1
+
+    OrgsChannel:
+        Consortium: OrgConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+            Capabilities:
+                <<: *ApplicationCapabilities

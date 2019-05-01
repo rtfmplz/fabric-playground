@@ -69,6 +69,7 @@ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example0
 8. instantiate chaincode
 
 ```bash
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 peer chaincode instantiate -o orderer1.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 ```
 
@@ -79,6 +80,7 @@ peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 9. invoke chaincode
 
 ```bash
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
 peer chaincode invoke -o orderer1.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
 ```
 
@@ -93,6 +95,8 @@ peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 > * [couchdb1](http://localhost:5984/_utils/)
 
 ## Attach Fabric-CA
+
+> Fabcar dapp을 정상 구동하려면 <6. Create, join channel & update Anchor peer> 전에 Fabric-ca를 실행해야 한다.
 
 1. Update fabric-ca.yaml
 
@@ -139,7 +143,6 @@ peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"functio
 ```
 peer chaincode query -C ch1 -n fabcar -c '{"Args":["queryAllCars"]}'
 peer chaincode query -C ch1 -n fabcar -c '{"Args":["queryCar", "CAR4"]}'
-
 ```
 
 2. npm install
@@ -162,8 +165,6 @@ node registerUser.js
 ```
 
 ---
-
-[FIXME] basic network는 되는데 왜 이건 안되지......
 
 ```
 node query.js
