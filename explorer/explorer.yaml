@@ -7,7 +7,7 @@ volumes:
 networks:
   fabric-playground:
     external:
-      name: fabric-playground_basic
+      name: ${COMPOSE_PROJECT_NAME}_basic
 
 services:
 
@@ -36,9 +36,9 @@ services:
       - ENROLL_ID=hlbeuser
       - DISCOVERY_AS_LOCALHOST=false
     volumes:
-      - ../conf/explorer-config.json:/opt/explorer/app/platform/fabric/config.json
-      - ../bin/:/tmp/fab-bin/
-      - ../crypto:/tmp/crypto
+      - ./conf/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ${FABRIC_SAMPLES}/bin/:/tmp/fab-bin/
+      - ${FABRIC_PLAYGROUND}/crypto:/tmp/crypto
       - credentialstore:/opt/tmp
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
     ports:
