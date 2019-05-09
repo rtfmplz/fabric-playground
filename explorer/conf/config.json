@@ -42,7 +42,7 @@
             "signedCert": {
               "path": "/tmp/crypto/peerOrganizations/org1/users/Admin@org1/msp/signcerts"
             },
-            "certificateAuthorities": ["fabric-ca"],
+            "certificateAuthorities": ["ca-org1"],
             "peers": ["peer1.org1", "peer2.org1"]
           },
           "OrdererMSP": {
@@ -91,8 +91,7 @@
             "caName": "fabric-ca"
           }
         }
-      },
-      "network-2": {}
+      }
     },
     "configtxgenToolPath": "/tmp/fab-bin/",
     "license": "Apache-2.0"
