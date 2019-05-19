@@ -191,19 +191,25 @@ node invoke.js
 
 ## Blockchain Explorer
 
-1. clone blockchain explorer
+1. clean docker volume
+
+```bash
+docker volume rm *_credentialstore *_pgdata
+```
+
+2. clone blockchain explorer
 
 ```bash
 git clone https://github.com/hyperledger/blockchain-explorer.git
 ```
 
-2. copy files for blockchain explorer
+3. copy files for blockchain explorer
 
 ```bash
 cp -avR explorer/ ${blockchain-explorer-pwd}
 ```
 
-3. docker-compose up
+4. docker-compose up
 
 ```bash
 docker stop explorer explorerdb || docker rm explorer explorerdb
