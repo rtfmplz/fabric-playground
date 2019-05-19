@@ -1,0 +1,53 @@
+{
+    "name": "fabric-playground",
+    "version": "1.0.0",
+    "client": {
+        "organization": "Org1",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "ch1": {
+            "orderers": [
+                "orderer1"
+            ],
+            "peers": {
+                "peer1.org1": {}
+            }
+        }
+    },
+    "organizations": {
+        "Org1": {
+            "mspid": "Org1MSP",
+            "peers": [
+                "peer1.org1",
+                "peer2.org1"
+            ],
+            "certificateAuthorities": [
+                "fabric-ca"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer": {
+            "url": "grpc://localhost:7050"
+        }
+    },
+    "peers": {
+        "peer1.org1": {
+            "url": "grpc://localhost:7051"
+        }
+    },
+    "certificateAuthorities": {
+        "fabric-ca": {
+            "url": "http://localhost:7054",
+            "caName": "fabric-ca"
+        }
+    }
+}
