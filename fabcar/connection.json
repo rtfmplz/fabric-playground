@@ -35,7 +35,7 @@
         }
     },
     "orderers": {
-        "orderer": {
+        "orderer1": {
             "url": "grpc://localhost:7050"
         }
     },
