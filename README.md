@@ -194,7 +194,7 @@ node invoke.js
 1. clean docker volume
 
 ```bash
-docker volume rm *_credentialstore *_pgdata
+docker stop explorer explorerdb && docker rm explorer explorerdb && docker volume rm fabric-playground_credentialstore fabric-playground_pgdata
 ```
 
 2. clone blockchain explorer
@@ -206,7 +206,7 @@ git clone https://github.com/hyperledger/blockchain-explorer.git
 3. copy files for blockchain explorer
 
 ```bash
-cp -avR explorer/ ${blockchain-explorer-pwd}
+cp -avR explorer ${blockchain-explorer-pwd}
 ```
 
 4. docker-compose up
@@ -216,3 +216,7 @@ cd ${blockchain-explorer-pwd}/explorer
 docker stop explorer explorerdb && docker rm explorer explorerdb
 docker-compose -f explorer.yaml up -d
 ```
+
+> Explorer
+>
+> * [Explorer](http://localhost:8080/)
