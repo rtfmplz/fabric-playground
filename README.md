@@ -5,7 +5,7 @@
 본 문서는 Hyperledger-Fabric 1.3 을 기반으로 동작하므로 아래 스크립트를 이용해서 관련 tool, docker image 등을 다운로드 한다.
 
 ```bash
-curl -sSL http://bit.ly/2ysbOFE | bash -s 1.3.0
+curl -sSL http://bit.ly/2ysbOFE | bash -s
 ```
 
 ## BootStrap Fabric Network
@@ -37,7 +37,7 @@ configtxgen -profile OrgsChannel -outputAnchorPeersUpdate updateAnchorOrg1.tx -c
 5. BootStrap Fabric network using docker-compose
 
 ```bash
-docker stop $(docker ps -aq) || docker rm $(docker ps -aq) || docker-compose -f bootstrap.yaml up -d
+docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker-compose -f bootstrap.yaml up -d
 ```
 
 ## Attach Fabric-CA
@@ -46,7 +46,7 @@ docker stop $(docker ps -aq) || docker rm $(docker ps -aq) || docker-compose -f 
 
 1. Update fabric-ca.yaml
 
-> 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./base/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
+> 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./docker-compose/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
 
 ```
 tree crypto/peerOrganizations/org1/ca
@@ -58,7 +58,7 @@ crypto/peerOrganizations/org1/ca
 1. Run Fabric-CA container
 
 ```
-docker-compose -f ./base/fabric-ca.yaml up -d
+docker-compose -f ./docker-compose/fabric-ca.yaml up -d
 ```
 
 ## Create, join channel & update Anchor peer
@@ -212,6 +212,7 @@ cp -avR explorer/ ${blockchain-explorer-pwd}
 4. docker-compose up
 
 ```bash
-docker stop explorer explorerdb || docker rm explorer explorerdb
+cd ${blockchain-explorer-pwd}/explorer
+docker stop explorer explorerdb && docker rm explorer explorerdb
 docker-compose -f explorer.yaml up -d
 ```

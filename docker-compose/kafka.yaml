@@ -3,7 +3,7 @@ version: "2"
 services:
 
   kafka1:
-    image: hyperledger/fabric-kafka:0.4.14
+    image: hyperledger/fabric-kafka:latest
     container_name: kafka
     hostname: kafka
     environment:

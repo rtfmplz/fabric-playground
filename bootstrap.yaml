@@ -8,7 +8,7 @@ networks:
 services:
   cli:
     extends:
-      file: base/cli.yaml
+      file: docker-compose/cli.yaml
       service: cli
     container_name: cli
     depends_on:
@@ -21,7 +21,7 @@ services:
 ##########################################
   orderer1.ordererorg:
     extends:
-      file: base/orderer.yaml
+      file: docker-compose/orderer.yaml
       service: orderer1
     container_name: orderer1
     depends_on:
@@ -31,7 +31,7 @@ services:
 
   kafka1:
     extends:
-      file: base/kafka.yaml
+      file: docker-compose/kafka.yaml
       service: kafka1
     container_name: kafka1
     depends_on:
@@ -41,7 +41,7 @@ services:
 
   zookeeper1:
     extends:
-      file: base/zookeeper.yaml
+      file: docker-compose/zookeeper.yaml
       service: zookeeper1
     container_name: zookeeper1
     networks:
@@ -50,7 +50,7 @@ services:
 ##########################################
   peer1.org1:
     extends:
-      file: base/peer.yaml
+      file: docker-compose/peer.yaml
       service: peer1
     container_name: peer1
     depends_on:
@@ -60,7 +60,7 @@ services:
 
   peer2.org1:
     extends:
-      file: base/peer.yaml
+      file: docker-compose/peer.yaml
       service: peer2
     container_name: peer2
     depends_on:
@@ -70,7 +70,7 @@ services:
 
   couchdb1:
     extends:
-      file: base/couchdb.yaml
+      file: docker-compose/couchdb.yaml
       service: couchdb1
     container_name: couchdb1
     networks:
@@ -78,7 +78,7 @@ services:
 
   couchdb2:
     extends:
-      file: base/couchdb.yaml
+      file: docker-compose/couchdb.yaml
       service: couchdb2
     container_name: couchdb2
     networks:
