@@ -222,7 +222,7 @@ CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode install -n mycc -v 1.0 -p githu
 1. clean docker volume
 
 ```bash
-docker stop explorer explorerdb && docker rm explorer explorerdb && docker volume rm fabric-playground_credentialstore fabric-playground_pgdata
+docker stop explorer explorerdb && docker rm explorer explorerdb && docker volume rm fabric-playground_walletstore fabric-playground_pgdata
 ```
 
 2. clone blockchain explorer

@@ -2,7 +2,9 @@ version: '2.1'
 
 volumes:
   pgdata:
-  credentialstore:
+  walletstore:
+  # grafana-storage:
+  # prometheus-storage:
 
 networks:
   fabric-playground:
@@ -37,12 +39,35 @@ services:
       - DISCOVERY_AS_LOCALHOST=false
     volumes:
       - ./conf/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./connection-profile:/opt/explorer/app/platform/fabric/connection-profile
       - ${FABRIC_SAMPLES}/bin/:/tmp/fab-bin/
       - ${FABRIC_PLAYGROUND}/crypto:/tmp/crypto
-      - credentialstore:/opt/tmp
+      - walletstore:/opt/wallet
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
     ports:
       - 8080:8080
     networks:
       - fabric-playground
 
+  # proms:
+  #   container_name: proms
+  #   image: prom/prometheus:latest
+  #   volumes:
+  #     - ../app/platform/fabric/artifacts/operations/balance-transfer/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus-storage:/prometheus
+  #   ports:
+  #     - '9090:9090'
+  #   networks:
+  #     - fabric-playground
+
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana:latest
+  #   volumes:
+  #     - ../app/platform/fabric/artifacts/operations/balance-transfer/balance-transfer-grafana-dashboard.json:/var/lib/grafana/dashboards/mydashboard.json
+  #     - ../app/platform/fabric/artifacts/operations/grafana_conf/provisioning:/etc/grafana/provisioning
+  #     - grafana-storage:/var/lib/grafana
+  #   ports:
+  #     - '3000:3000'
+  #   networks:
+  #     - fabric-playground

@@ -1,0 +1,59 @@
+{
+	"name": "fabric-playground",
+	"version": "1.0.0",
+	"client": {
+		"tlsEnable": false,
+		"adminUser": "admin",
+		"adminPassword": "admin",
+		"enableAuthentication": false,
+		"organization": "Org1MSP",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+	"channels": {
+		"ch1": {
+			"peers": {
+				"peer1.org1": {}
+			},
+			"connection": {
+				"timeout": {
+					"peer": {
+						"endorser": "6000",
+						"eventHub": "6000",
+						"eventReg": "6000"
+					}
+				}
+			}
+		}
+	},
+	"organizations": {
+		"Org1": {
+			"mspid": "Org1MSP",
+			"fullpath": false,
+			"adminPrivateKey": {
+				"path": "/tmp/crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore/dd3ee249947831a9ef5f781166b65a676a8df72a831d869e341522af78d20f9f_sk"
+			},
+			"signedCert": {
+				"path": "/tmp/crypto/peerOrganizations/org1/users/Admin@org1/msp/signcerts/Admin@org1-cert.pem"
+			}
+		}
+	},
+	"peers": {
+		"peer1.org1": {
+			"tlsCACerts": {
+				"path": "/tmp/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt"
+			},
+			"url": "grpc://peer1.org1:7051",
+			"eventUrl": "grpc://peer1.org1:7053",
+			"grpcOptions": {
+				"ssl-target-name-override": "peer1.org1"
+			}
+		}
+	}
+}
