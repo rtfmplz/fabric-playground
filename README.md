@@ -189,6 +189,34 @@ node query.js
 node invoke.js
 ```
 
+## peer2.org1
+
+여기까지 진행하면 peer2.org1의 WorldState([couchdb2](http://localhost:6984/_utils/)) 에는 데이터가 없는 것을 확인 할 수 있다.
+
+peer2가 ch1에 join 되지 않았기 때문이다.
+
+```bash
+CORE_PEER_ADDRESS=peer2.org1:7051 peer channel list
+```
+
+peer2를 channel(ch1)에 join 시키면 Block이 복제되고, 데이터를 확인 할 수 있다.
+
+```bash
+CORE_PEER_ADDRESS=peer2.org1:7051 peer channel join -b ch1.block
+```
+
+Block이 복제되면 qeury가 가능하다.
+```bash
+CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
+```
+
+invoke도 하고 싶다면 chaincode를 install 해야 한다.
+
+```bash
+CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+
+
 ## Blockchain Explorer
 
 1. clean docker volume
