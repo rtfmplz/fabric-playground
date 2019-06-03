@@ -22,7 +22,7 @@ services:
   orderer1.ordererorg:
     extends:
       file: docker-compose/orderer.yaml
-      service: orderer1
+      service: orderer
     container_name: orderer1
     depends_on:
       - kafka1
@@ -32,7 +32,7 @@ services:
   kafka1:
     extends:
       file: docker-compose/kafka.yaml
-      service: kafka1
+      service: kafka
     container_name: kafka1
     depends_on:
       - zookeeper1
@@ -42,7 +42,7 @@ services:
   zookeeper1:
     extends:
       file: docker-compose/zookeeper.yaml
-      service: zookeeper1
+      service: zookeeper
     container_name: zookeeper1
     networks:
       - basic

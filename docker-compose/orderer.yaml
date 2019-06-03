@@ -2,9 +2,8 @@ version: '2'
 
 services:
 
-  orderer1:
+  orderer:
     image: hyperledger/fabric-orderer:latest
-    container_name: orderer1
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     environment:
@@ -34,5 +33,5 @@ services:
     - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp
     - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/tls/:/var/hyperledger/orderer/tls
     # - orderer.example.com:/var/hyperledger/production/orderer
-    ports:
-      - 7050:7050
+    # ports:
+    #   - 7050:7050

@@ -2,10 +2,8 @@ version: "2"
 
 services:
 
-  kafka1:
+  kafka:
     image: hyperledger/fabric-kafka:latest
-    container_name: kafka
-    hostname: kafka
     environment:
       - TZ=Asia/Seoul
       - KAFKA_ADVERTISED_HOST_NAME=kafka1
