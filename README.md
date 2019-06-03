@@ -49,7 +49,6 @@ docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker-compose -f 
 > 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./docker-compose/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
 
 ```
-tree crypto/peerOrganizations/org1/ca
 crypto/peerOrganizations/org1/ca
 ├── 0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
 └── ca.org1-cert.pem
@@ -205,15 +204,15 @@ peer2를 channel(ch1)에 join 시키면 Block이 복제되고, 데이터를 확�
 CORE_PEER_ADDRESS=peer2.org1:7051 peer channel join -b ch1.block
 ```
 
-Block이 복제되면 qeury가 가능하다.
-```bash
-CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
-```
-
-invoke도 하고 싶다면 chaincode를 install 해야 한다.
+Install chaincode
 
 ```bash
 CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+
+Block이 복제되면 qeury가 가능하다.
+```bash
+CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 ```
 
 
@@ -229,6 +228,14 @@ docker stop explorer explorerdb && docker rm explorer explorerdb && docker volum
 
 ```bash
 git clone https://github.com/hyperledger/blockchain-explorer.git
+```
+
+3. update adminPrivateKey of Org1 in  'connection-profile/network.json'
+```bash
+# in fabric-playground
+tree crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore/
+crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore
+└── dd3ee249947831a9ef5f781166b65a676a8df72a831d869e341522af78d20f9f_sk
 ```
 
 3. copy files for blockchain explorer
