@@ -1,0 +1,192 @@
+version: "2"
+
+networks:
+  basic:
+
+
+##########################################
+services:
+  cli:
+    extends:
+      file: docker-compose/cli.yaml
+      service: cli
+    container_name: cli
+    depends_on:
+      - orderer1.ordererorg
+      - peer1.org1
+      - peer2.org1
+    networks:
+      - basic
+
+##########################################
+  orderer1.ordererorg:
+    extends:
+      file: docker-compose/orderer.yaml
+      service: orderer
+    container_name: orderer1
+    depends_on:
+      - kafka1
+    networks:
+      - basic
+    environment:
+      - ORDERER_HOST=orderer1.ordererorg
+      - CONFIGTX_ORDERER_KAFKA_BROKERS=[kafak1:9092,kafak2:9092,kafak3:9092,kafak4:9092]
+
+  orderer2.ordererorg:
+    extends:
+      file: docker-compose/orderer.yaml
+      service: orderer
+    container_name: orderer2
+    depends_on:
+      - kafka1
+    networks:
+      - basic
+    environment:
+      - ORDERER_HOST=orderer2.ordererorg
+      - CONFIGTX_ORDERER_KAFKA_BROKERS=[kafak1:9092,kafak2:9092,kafak3:9092,kafak4:9092]
+
+  orderer3.ordererorg:
+    extends:
+      file: docker-compose/orderer.yaml
+      service: orderer
+    container_name: orderer3
+    depends_on:
+      - kafka1
+    networks:
+      - basic
+    environment:
+      - ORDERER_HOST=orderer3.ordererorg
+      - CONFIGTX_ORDERER_KAFKA_BROKERS=[kafak1:9092,kafak2:9092,kafak3:9092,kafak4:9092]
+
+##########################################
+  kafka1:
+    extends:
+      file: docker-compose/kafka.yaml
+      service: kafka
+    container_name: kafka1
+    depends_on:
+      - zookeeper1
+    networks:
+      - basic
+    environment:
+        - KAFKA_BROKER_ID=1
+        - KAFKA_ADVERTISED_HOST_NAME=kafka1
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=4
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+
+  kafka2:
+    extends:
+        file: docker-compose/kafka.yaml
+        service: kafka
+    container_name: kafka2
+    depends_on:
+        - zookeeper1
+    networks:
+        - basic
+    environment:
+        - KAFKA_BROKER_ID=2
+        - KAFKA_ADVERTISED_HOST_NAME=kafka2
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=4
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+
+  kafka3:
+    extends:
+        file: docker-compose/kafka.yaml
+        service: kafka
+    container_name: kafka3
+    depends_on:
+        - zookeeper1
+    networks:
+        - basic
+    environment:
+        - KAFKA_BROKER_ID=3
+        - KAFKA_ADVERTISED_HOST_NAME=kafka3
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=4
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+
+  kafka4:
+    extends:
+        file: docker-compose/kafka.yaml
+        service: kafka
+    container_name: kafka4
+    depends_on:
+        - zookeeper1
+    networks:
+        - basic
+    environment:
+        - KAFKA_BROKER_ID=4
+        - KAFKA_ADVERTISED_HOST_NAME=kafka4
+        - KAFKA_DEFAULT_REPLICATION_FACTOR=4
+        - KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181,zookeeper2:2181,zookeeper3:2181
+
+
+##########################################
+  zookeeper1:
+    extends:
+      file: docker-compose/zookeeper.yaml
+      service: zookeeper
+    container_name: zookeeper1
+    networks:
+      - basic
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+
+  zookeeper2:
+    extends:
+        file: docker-compose/zookeeper.yaml
+        service: zookeeper
+    container_name: zookeeper2
+    networks:
+        - basic
+    environment:
+      - ZOO_MY_ID=2
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+
+  zookeeper3:
+    extends:
+        file: docker-compose/zookeeper.yaml
+        service: zookeeper
+    container_name: zookeeper3
+    networks:
+        - basic
+    environment:
+      - ZOO_MY_ID=3
+      - ZOO_SERVERS=server.1=zookeeper1:2888:3888 server.2=zookeeper2:2888:3888 server.3=zookeeper3:2888:3888
+
+##########################################
+  peer1.org1:
+    extends:
+      file: docker-compose/peer.yaml
+      service: peer1
+    container_name: peer1
+    depends_on:
+      - couchdb1
+    networks:
+      - basic
+
+  peer2.org1:
+    extends:
+      file: docker-compose/peer.yaml
+      service: peer2
+    container_name: peer2
+    depends_on:
+      - couchdb1
+    networks:
+      - basic
+
+  couchdb1:
+    extends:
+      file: docker-compose/couchdb.yaml
+      service: couchdb1
+    container_name: couchdb1
+    networks:
+      - basic
+
+  couchdb2:
+    extends:
+      file: docker-compose/couchdb.yaml
+      service: couchdb2
+    container_name: couchdb2
+    networks:
+      - basic

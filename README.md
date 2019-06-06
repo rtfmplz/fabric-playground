@@ -48,6 +48,7 @@ docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker-compose -f 
 
 > 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./docker-compose/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
 
+tree crypto/peerOrganizations/org1/ca
 ```
 crypto/peerOrganizations/org1/ca
 ├── 0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
