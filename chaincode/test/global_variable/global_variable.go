@@ -42,7 +42,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Error("Invalid invoke function name. Expecting \"invoke\"")
 }
 
-// Transaction makes payment of X units from A to B
 func (t *SimpleChaincode) count(stub shim.ChaincodeStubInterface) pb.Response {
 	Count = Count + 1
 	CountAsByte := []byte(strconv.Itoa(Count))
