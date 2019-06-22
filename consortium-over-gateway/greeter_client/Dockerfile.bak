@@ -27,5 +27,5 @@ RUN go get google.golang.org/grpc
 RUN go get github.com/golang/protobuf/protoc-gen-go
 
 RUN protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
-RUN go build -o main ./greeter_server 
+RUN go build -o main ./greeter_client
 CMD ["/app/main"]

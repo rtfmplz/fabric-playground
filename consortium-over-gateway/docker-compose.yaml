@@ -35,7 +35,7 @@ services:
             - "./org2-nginx/nginx.conf:/etc/nginx/nginx.conf"
             - "./org2-nginx/conf.d:/etc/nginx/conf.d"
         networks:
-            org1_net:
+            org2_net:
                 aliases:
                     - "orderer1.ordererorg"
                     - "orderer2.ordererorg"
@@ -56,7 +56,7 @@ services:
             - "./org3-nginx/nginx.conf:/etc/nginx/nginx.conf"
             - "./org3-nginx/conf.d:/etc/nginx/conf.d"
         networks:
-            org1_net:
+            org3_net:
                 aliases:
                     - "orderer1.ordererorg"
                     - "orderer2.ordererorg"
@@ -68,7 +68,8 @@ services:
                 aliases:
                     - "org3.gw"
 
-    org1_orderer1:
+
+    orderer1_ordererorg:
         build:
             context: .
             dockerfile: ./greeter_server/Dockerfile
@@ -77,17 +78,8 @@ services:
                 port: 7050
         networks:
             - org1_net
-    org1_orderer2:
-        build:
-            context: .
-            dockerfile: ./greeter_server/Dockerfile
-            args:
-                host: "orderer2.ordererorg"
-                port: 7050
-        networks:
-            - org1_net
 
-    org1_peer1:
+    peer1_org1:
         build:
             context: .
             dockerfile: ./greeter_server/Dockerfile
@@ -96,16 +88,8 @@ services:
                 port: 7051
         networks:
             - org1_net
-    org1_peer2:
-        build:
-            context: .
-            dockerfile: ./greeter_server/Dockerfile
-            args:
-                host: "peer2.org1"
-                port: 7051
-        networks:
-            - org1_net
-    org2_peer1:
+
+    peer1_org2:
         build:
             context: .
             dockerfile: ./greeter_server/Dockerfile
@@ -114,30 +98,13 @@ services:
                 port: 7051
         networks:
             - org2_net
-    org2_peer2:
-        build:
-            context: .
-            dockerfile: ./greeter_server/Dockerfile
-            args:
-                host: "peer2.org2"
-                port: 7051
-        networks:
-            - org2_net
-    org3_peer1:
+
+    peer1_org3:
         build:
             context: .
             dockerfile: ./greeter_server/Dockerfile
             args:
                 host: "peer1.org3"
-                port: 7051
-        networks:
-            - org3_net
-    org3_peer2:
-        build:
-            context: .
-            dockerfile: ./greeter_server/Dockerfile
-            args:
-                host: "peer2.org3"
                 port: 7051
         networks:
             - org3_net
@@ -163,7 +130,6 @@ services:
         networks:
             - org1_net
 
-
     org1_peer1_tester:
         build:
             context: .
@@ -184,6 +150,7 @@ services:
             - 17181:80
         networks:
             - org1_net
+
     org2_peer1_tester:
         build:
             context: .
@@ -204,6 +171,7 @@ services:
             - 17281:80
         networks:
             - org2_net
+
     org3_peer1_tester:
         build:
             context: .

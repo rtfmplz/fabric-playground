@@ -1,0 +1,56 @@
+version: "3"
+
+networks:
+    internet:
+    client_net:
+    server_net:
+
+services:
+
+    server_gw:
+        image: nginx
+        ports:
+        volumes:
+            - "./greeter-server-nginx/nginx.conf:/etc/nginx/nginx.conf"
+            - "./greeter-server-nginx/conf.d:/etc/nginx/conf.d"
+        networks:
+            server_net:
+                aliases:
+                    - "greeter.client"
+            internet:
+                aliases:
+                    - "greeter.server.gw"
+
+    client_gw:
+        image: nginx
+        volumes:
+            - "./greeter-client-nginx/nginx.conf:/etc/nginx/nginx.conf"
+            - "./greeter-client-nginx/conf.d:/etc/nginx/conf.d"
+        networks:
+            client_net:
+                aliases:
+                    - "greeter.server"
+            internet:
+                aliases:
+                    - "greeter.client.gw"
+ 
+    greeter_server:
+        build:
+            context: .
+            dockerfile: ./greeter_server/Dockerfile
+            args:
+                host: "peer1.org3"
+                port: 7051
+        networks:
+            - org3_net
+
+    greeter_client:
+        build:
+            context: .
+            dockerfile: ./greeter_client/Dockerfile
+            args:
+                host: "orderer1.ordererorg"
+        ports:
+            - 80:80
+        networks:
+            - org1_net
