@@ -1,4 +1,5 @@
-FROM golang:latest 
+FROM golang
+
 RUN mkdir /app 
 ADD . /app/ 
 WORKDIR /app 
@@ -25,7 +26,12 @@ RUN git clone https://github.com/google/protobuf.git && \
 RUN go get google.golang.org/grpc
 # Install protoc-gen-go
 RUN go get github.com/golang/protobuf/protoc-gen-go
-
 RUN protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
+
+# COPY ./certs/CertAuth.crt .
+# COPY ./certs/${host}.crt .
+# COPY ./certs/${host}.key .
+EXPOSE 80
+
 RUN go build -o main ./greeter_server 
 CMD ["/app/main"]

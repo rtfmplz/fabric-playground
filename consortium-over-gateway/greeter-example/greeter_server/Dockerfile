@@ -25,7 +25,8 @@ RUN git clone https://github.com/google/protobuf.git && \
 RUN go get google.golang.org/grpc
 # Install protoc-gen-go
 RUN go get github.com/golang/protobuf/protoc-gen-go
-
+# Create helloworld.pb.go
 RUN protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
-RUN go build -o main ./greeter_client
+
+RUN go build -o main ./greeter_server 
 CMD ["/app/main"]

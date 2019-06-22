@@ -25,7 +25,7 @@ import (
 	"os"
 	"time"
 
-	pd "../helloworld"
+	pb "../helloworld"
 	"google.golang.org/grpc"
 )
 
