@@ -4,33 +4,35 @@ RUN mkdir /app
 ADD . /app/ 
 WORKDIR /app 
 
-# install protobuf from source
-RUN apt-get update && \
-    apt-get -y install git unzip build-essential autoconf libtool
-RUN git clone https://github.com/google/protobuf.git && \
-    cd protobuf && \
-    ./autogen.sh && \
-    ./configure && \
-    make && \
-    make install && \
-    ldconfig && \
-    make clean && \
-    cd .. && \
-    rm -r protobuf
+# # install protobuf from source
+# RUN apt-get update && \
+#     apt-get -y install git unzip build-essential autoconf libtool
+# RUN git clone https://github.com/google/protobuf.git && \
+#     cd protobuf && \
+#     ./autogen.sh && \
+#     ./configure && \
+#     make && \
+#     make install && \
+#     ldconfig && \
+#     make clean && \
+#     cd .. && \
+#     rm -r protobuf
 
-# NOTE: for now, this docker image always builds the current HEAD version of
-# gRPC.  After gRPC's beta release, the Dockerfile versions will be updated to
-# build a specific version.
+# # NOTE: for now, this docker image always builds the current HEAD version of
+# # gRPC.  After gRPC's beta release, the Dockerfile versions will be updated to
+# # build a specific version.
 
-# Get the source from GitHub
-RUN go get google.golang.org/grpc
-# Install protoc-gen-go
-RUN go get github.com/golang/protobuf/protoc-gen-go
-RUN protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
+# # Install protoc-gen-go
+# RUN go get github.com/golang/protobuf/protoc-gen-go
+# RUN protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
 
 # COPY ./certs/CertAuth.crt .
 # COPY ./certs/${host}.crt .
 # COPY ./certs/${host}.key .
+
+# Get the source from GitHub
+RUN go get google.golang.org/grpc
+
 EXPOSE 80
 
 RUN go build -o main ./greeter_server 
