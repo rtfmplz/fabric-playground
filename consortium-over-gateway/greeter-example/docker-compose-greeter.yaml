@@ -37,6 +37,13 @@ services:
         build:
             context: .
             dockerfile: ./greeter_server/Dockerfile
+        environment:
+            - TLS_ENABLE=${TLS}
+            - CA_CRT=./certificates/ca.crt
+            - SERVER_CRT=./certificates/greeter.server.crt
+            - SERVER_KEY=./certificates/greeter.server.key
+            - CLIENT_CRT=./certificates/greeter.client.crt
+            - CLIENT_KEY=./certificates/greeter.client.key
         networks:
             server_net:
                 aliases:
@@ -46,9 +53,16 @@ services:
         build:
             context: .
             dockerfile: ./greeter_client/Dockerfile
-        ports:
-            - 80:80
+        environment:
+            - TLS_ENABLE=${TLS}
+            - CA_CRT=./certificates/ca.crt
+            - SERVER_CRT=./certificates/greeter.server.crt
+            - SERVER_KEY=./certificates/greeter.server.key
+            - CLIENT_CRT=./certificates/greeter.client.crt
+            - CLIENT_KEY=./certificates/greeter.client.key
         networks:
             client_net:
                 aliases:
                     - "greeter.client"
+        depends_on:
+            - greeter_server

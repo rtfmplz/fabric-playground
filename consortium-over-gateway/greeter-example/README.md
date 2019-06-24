@@ -4,16 +4,21 @@
 
 ## Getting Started
 
-
-### Without TLS
-
 * docker-compose up
 
 ```
-docker-compose -f docker-compose-greeter.yaml up
+docker-compose -f docker-compose-greeter.yaml up [--build]
 ```
 
-* Check "Greeting: Hello world" string in log of greeter_client
+### W/O TLS
+
+* 설정 변경
+    * `.env`: `TLS=OFF`
+    * ./greeter_server/nginx/nginx.conf
+        * #include /etc/nginx/conf.d/gw-http-*.conf;
+        * include	/etc/nginx/conf.d/gw-stream-*.conf;
+
+* Result
 
 ```
 server_gw_1       | 172.25.0.3 - - [24/Jun/2019:07:04:32 +0000] "POST /helloworld.Greeter/SayHello HTTP/2.0" 200 18 "-" "grpc-go/1.22.0-dev" "172.26.0.3"
@@ -23,28 +28,18 @@ greeter_client_1  | 2019/06/24 07:04:32 Greeting: Hello world
 greeter-example_greeter_client_1 exited with code 0
 ```
 
-* If you try to Repeat the test
+### W/ TLS
+
+* 설정 변경
+    * `.env`: `TLS=OFF`
+    * ./greeter_server/nginx/nginx.conf
+        * include /etc/nginx/conf.d/gw-http-*.conf;
+        * #include	/etc/nginx/conf.d/gw-stream-*.conf;
+
+* Result
 
 ```
-docker restart greeter-example_greeter_client_1
+greeter_server_1  | 2019/06/24 16:03:43 Received: world
+greeter_client_1  | 2019/06/24 16:03:43 Greeting: Hello world
+greeter-example_greeter_client_1 exited with code 0
 ```
-
-### With TLS
-
-> certificates 만드는 과정은 아래 링크 참조
-> 
-> * http://krishicks.com/post/2016/11/01/using-grpc-with-mutual-tls-in-golang/
-
-* set env
-```
-export TLS_ENABLE=ON
-export CA_CRT=../certificates/ca.crt
-export SERVER_CRT=../certificates/greeter.server.crt
-export SERVER_KEY=../certificates/greeter.server.key
-export CLIENT_CRT=../certificates/greeter.client.crt
-export CLIENT_KEY=../certificates/greeter.client.key
-```
-
-
-
-
