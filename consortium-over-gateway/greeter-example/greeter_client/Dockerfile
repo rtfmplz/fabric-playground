@@ -33,7 +33,5 @@ WORKDIR /app
 # Get the source from GitHub
 RUN go get google.golang.org/grpc
 
-EXPOSE 80
-
-RUN go build -o main ./greeter_server 
+RUN go build -o main ./greeter_client 
 CMD ["/app/main"]
