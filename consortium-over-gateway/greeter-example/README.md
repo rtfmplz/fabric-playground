@@ -31,6 +31,19 @@ docker restart greeter-example_greeter_client_1
 
 ### With TLS
 
+> certificates 만드는 과정은 아래 링크 참조
+> 
+> * http://krishicks.com/post/2016/11/01/using-grpc-with-mutual-tls-in-golang/
+
+* set env
+```
+export TLS_ENABLE=ON
+export CA_CRT=../certificates/ca.crt
+export SERVER_CRT=../certificates/greeter.server.crt
+export SERVER_KEY=../certificates/greeter.server.key
+export CLIENT_CRT=../certificates/greeter.client.crt
+export CLIENT_KEY=../certificates/greeter.client.key
+```
 
 
 

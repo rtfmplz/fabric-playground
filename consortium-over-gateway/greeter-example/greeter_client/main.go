@@ -1,19 +1,6 @@
 /*
- *
- * Copyright 2015 gRPC authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ * https://github.com/grpc/grpc-go/tree/master/examples
+ * http://krishicks.com/post/2016/11/01/using-grpc-with-mutual-tls-in-golang/
  */
 
 // Package main implements a client for Greeter service.
@@ -21,22 +8,81 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
 
 	pb "../helloworld"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 const (
-	address     = "greeter.server:50051"
+	host        = "greeter.server"
+	port        = "50051"
+	address     = host + ":" + port
 	defaultName = "world"
 )
 
+func dialWithTls(crtPath string, keyPath string, caCrtPath string) grpc.DialOption {
+	certificate, err := tls.LoadX509KeyPair(
+		crtPath,
+		keyPath,
+	)
+	certPool := x509.NewCertPool()
+	bs, err := ioutil.ReadFile(caCrtPath)
+	if err != nil {
+		log.Fatalf("failed to read ca cert: %s", err)
+	}
+
+	ok := certPool.AppendCertsFromPEM(bs)
+	if !ok {
+		log.Fatal("failed to append certs")
+	}
+
+	transportCreds := credentials.NewTLS(&tls.Config{
+		ServerName:   host,
+		Certificates: []tls.Certificate{certificate},
+		RootCAs:      certPool,
+	})
+
+	return grpc.WithTransportCredentials(transportCreds)
+}
+
 func main() {
+
+	tlsEnable := os.Getenv("TLS_ENABLE")
+	clientCrtPath := os.Getenv("CLIENT_CRT")
+	clientKeyPath := os.Getenv("CLIENT_KEY")
+	caCrtPath := os.Getenv("CA_CRT")
+
+	if len(tlsEnable) == 0 {
+		panic("need to TLS_ENABLE")
+	}
+	if len(clientCrtPath) == 0 {
+		panic("need to CLIENT_CRT")
+	}
+	if len(clientKeyPath) == 0 {
+		panic("need to CLIENT_KEY")
+	}
+	if len(caCrtPath) == 0 {
+		panic("need to CA_CRT")
+	}
+
+	var dialOption grpc.DialOption
+
+	switch tlsEnable {
+	case "ON":
+		dialOption = dialWithTls(clientCrtPath, clientKeyPath, caCrtPath)
+	default:
+		dialOption = grpc.WithInsecure()
+	}
+
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(address, dialOption)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
