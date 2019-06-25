@@ -48,6 +48,9 @@ services:
             server_net:
                 aliases:
                     - "greeter.server"
+        depends_on:
+            - server_gw
+            - client_gw
 
     greeter_client:
         build:
