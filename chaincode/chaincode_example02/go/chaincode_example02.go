@@ -74,15 +74,19 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Invoke")
-	function, args := stub.GetFunctionAndParameters()
+	function, args := stub.GetFunctionAndParameters()i
+	stub.SetEvent("Invoke-main", []byte("payload"))
 	if function == "invoke" {
 		// Make payment of X units from A to B
+		stub.SetEvent("Invoke-invoke", []byte("payload"))
 		return t.invoke(stub, args)
 	} else if function == "delete" {
 		// Deletes an entity from its state
+		stub.SetEvent("Invoke-delete", []byte("payload"))
 		return t.delete(stub, args)
 	} else if function == "query" {
 		// the old "Query" is now implemtned in invoke
+		stub.SetEvent("Invoke-query", []byte("payload"))
 		return t.query(stub, args)
 	}
 
@@ -96,6 +100,7 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 	var X int          // Transaction value
 	var err error
 
+	stub.SetEvent("invoke", []byte("payload"))
 	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
@@ -152,6 +157,7 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
+	stub.SetEvent("delete", []byte("payload"))
 	A := args[0]
 
 	// Delete the key from the state in ledger
@@ -172,6 +178,7 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
+	stub.SetEvent("query", []byte("payload"))
 	A = args[0]
 
 	// Get the state from the ledger
