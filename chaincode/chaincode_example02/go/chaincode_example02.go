@@ -74,19 +74,19 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Invoke")
-	function, args := stub.GetFunctionAndParameters()i
-	stub.SetEvent("Invoke-main", []byte("payload"))
+	function, args := stub.GetFunctionAndParameters()
+	stub.SetEvent("Invoke1", []byte("payload"))
 	if function == "invoke" {
 		// Make payment of X units from A to B
-		stub.SetEvent("Invoke-invoke", []byte("payload"))
+		stub.SetEvent("Invoke2", []byte("payload"))
 		return t.invoke(stub, args)
 	} else if function == "delete" {
 		// Deletes an entity from its state
-		stub.SetEvent("Invoke-delete", []byte("payload"))
+		stub.SetEvent("Invoke3", []byte("payload"))
 		return t.delete(stub, args)
 	} else if function == "query" {
 		// the old "Query" is now implemtned in invoke
-		stub.SetEvent("Invoke-query", []byte("payload"))
+		stub.SetEvent("Invoke4", []byte("payload"))
 		return t.query(stub, args)
 	}
 

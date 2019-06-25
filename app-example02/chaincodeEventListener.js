@@ -44,19 +44,19 @@ async function main() {
         event_hubs.forEach((eh) => {
 
             let addChaincodeEventPromise = new Promise((reslove, reject) => {
-
-				eh.registerChaincodeEvent('mycc', '[a-zA-Z]+',
-					(event, block_num, txnid, status) => {
-						console.log(event);
-						console.log('Successfully got a chaincode event with transid:' + txnid + ' with status:' + status);
-					}, (err) => {
-						console.log(err);
-						reject(err);
-					}
-					// no options specified
-					// unregister will default to false
-					// disconnect will default to false
-				);
+                eh.registerChaincodeEvent('mycc', '[a-zA-Z0-9]+',
+                    (event, block_num, txnid, status) => {
+                        console.log(event);
+                        console.log('Successfully got a chaincode event with block_num' + block_num + 'with transid:' + txnid + ' with status:' + status);
+                    }, (err) => {
+                        console.log(err);
+                        reject(err);
+                    }, {
+                        // unregister will default to false
+                        // disconnect will default to false
+                        // as_array: true
+                    }
+                );
                 eh.connect();
             });
             promises.push(addChaincodeEventPromise);
