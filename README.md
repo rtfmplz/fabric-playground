@@ -63,7 +63,7 @@ docker-compose -f ./docker-compose/fabric-ca.yaml up -d
 
 ## Create, join channel & update Anchor peer
 
-1. Create, join channel & update Anchor peer
+6. Create, join channel & update Anchor peer
 
 ```bash
 docker exec -it cli /bin/bash
