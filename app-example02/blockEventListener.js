@@ -54,7 +54,7 @@ async function main() {
                         unregister: false,
                         disconnect: false
                     });
-                eh.connect();
+                eh.connect({full_block: true});
             });
             promises.push(addBlockEventPromise);
         });

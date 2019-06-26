@@ -57,7 +57,7 @@ async function main() {
                         // as_array: true
                     }
                 );
-                eh.connect();
+                eh.connect({full_block: true});
             });
             promises.push(addChaincodeEventPromise);
         });
