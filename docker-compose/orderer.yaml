@@ -32,6 +32,6 @@ services:
     - ../genesis.block:/var/hyperledger/orderer/genesis.block
     - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp
     - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/tls/:/var/hyperledger/orderer/tls
-    # - orderer.example.com:/var/hyperledger/production/orderer
+    - ../production/orderer:/var/hyperledger/production/
     ports:
       - 7050:7050
