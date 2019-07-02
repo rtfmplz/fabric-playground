@@ -2,3 +2,4 @@ crypto/
 crypto-config/
 *.block
 *.tx
+production
