@@ -11,7 +11,7 @@
 
 ```bash
 docker exec -it cli bash
-peer chaincode install -n example02_pdc -v 1.3 -p github.com/chaincode/example02_pdc/go/
+peer chaincode install -n example02_pdc -v 1.0 -p github.com/chaincode/example02_pdc/go/
 ```
 
 ## instantiate chaincode
@@ -26,7 +26,7 @@ peer chaincode install -n example02_pdc -v 1.3 -p github.com/chaincode/example02
 > ```
 
 ```bash
-peer chaincode upgrade -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc -v 1.3 -c '{"Args":["init"]}' -P "OR ('Org1MSP.member')" --collections-config 'example-pdc/collection-config.json'
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc -v 1.0 -c '{"Args":["init"]}' -P "OR ('Org1MSP.member')" --collections-config 'example-pdc/collection-config.json'
 ```
 
 #### collection-config.json
