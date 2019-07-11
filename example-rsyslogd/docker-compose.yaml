@@ -1,0 +1,34 @@
+version: "3"
+
+networks:
+  basic:
+
+services:
+  rsyslog:
+    image: rsyslog/rsyslog_base_centos7
+    container_name: rsyslog
+    ports:
+      - 10514:10514
+    volumes:
+      - "./rsyslog.conf:/etc/rsyslog.conf"
+      - "./log/nginx:/var/log/nginx"
+    command: /sbin/rsyslogd -n
+    networks:
+      - basic
+    
+  rsyslog_nginx:
+    image: nginx
+    container_name: rsyslog_nginx
+    ports:
+      - 8080:80
+    logging:
+      # @see https://docs.docker.com/config/containers/logging/syslog/
+      driver: syslog
+      options:
+        syslog-address: "udp://localhost:10514"
+        syslog-facility: "local0"
+        tag: "{{.Name}}"
+    networks:
+      - basic
+    depends_on:
+      - rsyslog
