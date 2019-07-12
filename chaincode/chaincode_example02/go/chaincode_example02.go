@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package example02
 
 //WARNING - this chaincode's ID is hard-coded in chaincode_example04 to illustrate one way of
 //calling chaincode from a chaincode. If this example is modified, chaincode_example04.go has
