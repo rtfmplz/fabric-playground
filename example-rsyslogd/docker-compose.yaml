@@ -11,7 +11,7 @@ services:
       - 10514:10514
     volumes:
       - "./rsyslog.conf:/etc/rsyslog.conf"
-      - "./log/nginx:/var/log/nginx"
+      - "./logs:/var/log/syslog"
     command: /sbin/rsyslogd -n
     networks:
       - basic
