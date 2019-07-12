@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  pdc_unittester:
+    image: hyperledger/fabric-ccenv
+    container_name: pdc_unittester
+    volumes:
+      - ./mockstub.go:/opt/gopath/src/github.com/hyperledger/fabric/core/chaincode/shim/mockstub.go
+      - ./chaincode:/chaincode
+    working_dir: /chaincode
+    command: go test
