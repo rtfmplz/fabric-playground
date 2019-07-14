@@ -1,4 +1,4 @@
-package example02
+package main
 
 import (
 	"encoding/json"
@@ -13,29 +13,49 @@ const (
 	pdcName = "pdc_org1_org2"
 )
 
+type example02 struct {
+	ObjectType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
+	Name       string `json:"name"`    //the fieldtags are needed to keep case from bouncing around
+	Val        int    `json:"val"`
+}
+
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
 
-// private data APIs are not allowed in chaincode Init()
+/**
+ * Init
+ *
+ * private data APIs are not allowed in chaincode Init()
+ */
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(nil)
 }
 
+/**
+ * Invoke
+ */
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 
-	if function == "init" {
-		return t.init(stub, args)
-	} else if function == "invoke" {
-		return t.invoke(stub, args)
-	} else if function == "delete" {
-		return t.delete(stub, args)
-	} else if function == "query" {
-		return t.query(stub, args)
-	}
+	switch function {
 
-	return shim.Error("Invalid invoke function name. Expecting \"init\" \"invoke\" \"delete\" \"query\"")
+	case "init":
+		return t.init(stub, args)
+
+	case "transfer":
+		return t.transfer(stub, args)
+
+	case "delete":
+		return t.delete(stub, args)
+
+	case "query":
+		return t.query(stub, args)
+
+	default:
+		// return shim.Error("Invalid invoke function name. Expecting \"init\" \"transfer\" \"delete\" \"query\"")
+		return shim.Error("test")
+	}
 }
 
 func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -44,11 +64,15 @@ func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) 
 
 	stub.SetEvent("init", []byte("payload"))
 
-	type example02PdcTransientInput struct {
+	type initTransientInput struct {
 		Aname string `json:"a_name"`
 		Aval  int    `json:"a_val"`
 		Bname string `json:"b_name"`
 		Bval  int    `json:"b_val"`
+	}
+
+	if len(args) != 0 {
+		return shim.Error("Incorrect number of arguments. Private marble data must be passed in transient map.")
 	}
 
 	transMap, err := stub.GetTransient()
@@ -64,12 +88,13 @@ func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error("initData value in the transient map must be a non-empty JSON string")
 	}
 
-	var transientInput example02PdcTransientInput
+	var transientInput initTransientInput
 	err = json.Unmarshal(transMap["initData"], &transientInput)
 	if err != nil {
 		return shim.Error("Failed to decode JSON of: " + string(transMap["initData"]))
 	}
 
+	// === Save initData to state ===
 	err = stub.PutPrivateData(pdcName, transientInput.Aname, []byte(strconv.Itoa(transientInput.Aval)))
 	if err != nil {
 		return shim.Error(err.Error())
@@ -83,12 +108,12 @@ func (t *SimpleChaincode) init(stub shim.ChaincodeStubInterface, args []string) 
 }
 
 // Transaction makes payment of X units from A to B
-func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var Aval, Bval int // Asset holdings
 	var X int          // Transaction value
 	var err error
 
-	stub.SetEvent("invoke", []byte("payload"))
+	stub.SetEvent("transfer", []byte("payload"))
 
 	type transferTransientInput struct {
 		Sender   string `json:"sender"`
@@ -166,9 +191,10 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 
 	stub.SetEvent("delete", []byte("payload"))
 	A := args[0]
+	fmt.Printf("deletedeletedeletedeletedelete: %s", A)
 
 	// Delete the key from the state in ledger
-	err := stub.DelState(A)
+	err := stub.DelPrivateData(pdcName, A)
 	if err != nil {
 		return shim.Error("Failed to delete state")
 	}

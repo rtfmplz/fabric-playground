@@ -17,11 +17,11 @@ peer chaincode install -n example02_pdc -v 1.0 -p github.com/chaincode/example02
 ## instantiate chaincode
 
 > ## private data APIs are not allowed in chaincode Init()
-> 
+>
 > * chaincode_example02.go의 `Init()`의 `PutState()`를 `PutPrivateData()`로만 바꿔서 그대로 사용하면 다음과 같은 Error 가 난다.
 > * 하여, `Init()`의 내용을 주석처리하고, `init()` 함수를 추가 함
 >
-> ```
+> ```bash
 > Error: could not assemble transaction, err proposal response was not successful, error code 500, msg transaction returned with failure: PUT_STATE failed: transaction ID: e390654c44d60cd514c566d123f5f0afef69e44774df5432b5091e1d9f0002eb: private data APIs are not allowed in chaincode Init()
 > ```
 
@@ -69,7 +69,7 @@ peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc --peer
 
 ```bash
 export TRANSFER_DATA=$(echo -n "{\"sender\":\"a\",\"receiver\":\"b\",\"val\":10}" | base64)
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke"]}' --transient "{\"transferData\":\"$TRANSFER_DATA\"}"
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["transfer"]}' --transient "{\"transferData\":\"$TRANSFER_DATA\"}"
 ```
 
 ## query
@@ -78,6 +78,11 @@ peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc --peer
 peer chaincode query -C ch1 -n example02_pdc -c '{"Args":["query","a"]}'
 ```
 
+## delete
+
+```bash
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["delete","a"]}'
+```
 
 ## reference
 
