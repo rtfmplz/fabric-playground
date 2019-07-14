@@ -37,7 +37,10 @@ configtxgen -profile OrgsChannel -outputAnchorPeersUpdate updateAnchorOrg1.tx -c
 5. BootStrap Fabric network using docker-compose
 
 ```bash
-docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker-compose -f bootstrap.yaml up -d
+docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && rm -rf ./production
+docker rmi $(docker images | grep dev)
+
+docker-compose -f bootstrap.yaml up -d
 ```
 
 ## Attach Fabric-CA
@@ -49,7 +52,8 @@ docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker-compose -f 
 > 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./docker-compose/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
 
 tree crypto/peerOrganizations/org1/ca
-```
+
+```bash
 tree crypto/peerOrganizations/org1/ca
 ├── 0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
 └── ca.org1-cert.pem
@@ -57,7 +61,7 @@ tree crypto/peerOrganizations/org1/ca
 
 1. Run Fabric-CA container
 
-```
+```bash
 docker-compose -f ./docker-compose/fabric-ca.yaml up -d
 ```
 
@@ -70,9 +74,9 @@ docker exec -it cli /bin/bash
 ```
 
 ```bash
-# w/ TLS
-peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx
 # w/o TLS
+peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx
+# w/ TLS
 peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
@@ -81,9 +85,9 @@ peer channel join -b ch1.block
 ```
 
 ```bash
-# w/ TLS
-peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx
 # w/o TLS
+peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx
+# w/ TLS
 peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
@@ -98,9 +102,9 @@ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example0
 8. instantiate chaincode
 
 ```bash
-# w/ TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 # w/o TLS
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
+# w/ TLS
 peer chaincode instantiate -o orderer1.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 ```
 
@@ -111,9 +115,9 @@ peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 9. invoke chaincode
 
 ```bash
-# w/ TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
 # w/o TLS
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
+# w/ TLS
 peer chaincode invoke -o orderer1.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
 ```
 
@@ -142,16 +146,16 @@ peer chaincode install -n fabcar -v 1.0 -p github.com/chaincode/fabcar/go/
 ```
 
 ```bash
-# w/ TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')"
 # w/o TLS
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')"
+# w/ TLS
 peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')" --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
 ```bash
-# w/ TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}'
 # w/o TLS
+peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}'
+# w/ TLS
 peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}' --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
