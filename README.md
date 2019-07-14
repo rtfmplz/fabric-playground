@@ -50,7 +50,7 @@ docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker-compose -f 
 
 tree crypto/peerOrganizations/org1/ca
 ```
-crypto/peerOrganizations/org1/ca
+tree crypto/peerOrganizations/org1/ca
 ├── 0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
 └── ca.org1-cert.pem
 ```
