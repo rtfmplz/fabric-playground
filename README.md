@@ -43,6 +43,11 @@ docker rmi $(docker images | grep dev)
 docker-compose -f bootstrap.yaml up -d
 ```
 
+> 참고: none(untaggged) image를 지우고 싶다면?
+>
+> * docker rmi $(docker images -f "dangling=true" -q)
+
+
 ## Attach Fabric-CA
 
 > [주의] Fabcar dapp을 정상 구동하려면 채널 생성 전에 Fabric-ca를 실행해야 한다.
