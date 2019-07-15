@@ -8,7 +8,7 @@ services:
     image: rsyslog/rsyslog_base_centos7
     container_name: rsyslog
     ports:
-      - 10514:10514
+      - 10514:10514/udp
     volumes:
       - "./rsyslog.conf:/etc/rsyslog.conf"
       - "./logs:/var/log/syslog"
@@ -25,7 +25,7 @@ services:
       # @see https://docs.docker.com/config/containers/logging/syslog/
       driver: syslog
       options:
-        syslog-address: "tcp://localhost:10514"
+        syslog-address: "udp://localhost:10514"
         syslog-facility: "local0"
         tag: "{{.Name}}"
     networks:
