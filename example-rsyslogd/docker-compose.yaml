@@ -25,7 +25,7 @@ services:
       # @see https://docs.docker.com/config/containers/logging/syslog/
       driver: syslog
       options:
-        syslog-address: "udp://localhost:10514"
+        syslog-address: "tcp://localhost:10514"
         syslog-facility: "local0"
         tag: "{{.Name}}"
     networks:
