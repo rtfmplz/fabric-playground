@@ -6,7 +6,6 @@
 > * [Attach Fabric-CA](https://github.com/rtfmplz/fabric-playground#attach-fabric-ca)
 > * [Create, join channel & update Anchor peer](https://github.com/rtfmplz/fabric-playground#create-join-channel--update-anchor-peer)
 
-
 ## install chiancode
 
 ```bash
@@ -26,37 +25,36 @@ peer chaincode install -n example02_pdc -v 1.0 -p github.com/chaincode/example02
 > ```
 
 ```bash
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc -v 1.0 -c '{"Args":["init"]}' -P "OR ('Org1MSP.member')" --collections-config 'example-pdc/collection-config.json'
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n example02_pdc -v 1.0 -c '{"Args":["init"]}' -P "OR ('Org1MSP.member')" --collections-config 'examples/pdc/collection-config.json'
 ```
 
-#### collection-config.json
+### collection-config.json
 
 ```json
 [
-	{
-		// pdc 이름
-		"name": "pdc_org1_org2",
+    {
+        // pdc 이름
+        "name": "pdc_org1_org2",
 
-		// private data collection 배포 정책은 private data를 공유할 조직의 peer를 정의한다.
-		// 서명 정책 구문을 사용하여 표현된다. ([fabric-sdk-node의 tutorial](https://fabric-sdk-node.github.io/release-1.4/tutorial-private-data.html)을 보면 json 형태로도 표현 가능한 듯)
-		"policy": "OR('Org1MSP.member', 'Org2MSP.member')",
-		
-		// endorsing peer가 endorsement에 서명전 private data를 배급해야 하는 필수 peer 수
-		// endorsement의 조건으로 private data의 보급을 요구해서, endorsing peer가 죽은 경우에도 private data를 사용하도록 하는 안전장치 역할
-		"requiredPeerCount": 0,
-		
-		// 데이터 중복성을 위해서 endorsing peer가 데이터를 배포하려고 시도하는 다른  peer의 수
-		"maxPeerCount": 2, 
-		
-		// private data가 유지될 block 수
-		"blockToLive": 0, //
-		
-		// true로 설정 시, collection member orgization에 속한 client만 데이터 읽기가 가능
-		"memberOnlyRead": true
-	}
+        // private data collection 배포 정책은 private data를 공유할 조직의 peer를 정의한다.
+        // 서명 정책 구문을 사용하여 표현된다. ([fabric-sdk-node의 tutorial](https://fabric-sdk-node.github.io/release-1.4/tutorial-private-data.html)을 보면 json 형태로도 표현 가능한 듯)
+        "policy": "OR('Org1MSP.member', 'Org2MSP.member')",
+
+        // endorsing peer가 endorsement에 서명전 private data를 배급해야 하는 필수 peer 수
+        // endorsement의 조건으로 private data의 보급을 요구해서, endorsing peer가 죽은 경우에도 private data를 사용하도록 하는 안전장치 역할
+        "requiredPeerCount": 0,
+
+        // 데이터 중복성을 위해서 endorsing peer가 데이터를 배포하려고 시도하는 다른  peer의 수
+        "maxPeerCount": 2,
+
+        // private data가 유지될 block 수
+        "blockToLive": 0, //
+
+        // true로 설정 시, collection member orgization에 속한 client만 데이터 읽기가 가능
+        "memberOnlyRead": true
+    }
 ]
 ```
-
 
 ## init
 
