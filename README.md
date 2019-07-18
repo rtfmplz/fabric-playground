@@ -101,14 +101,14 @@ peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx 
 7. install chiancode
 
 ```bash
-peer chaincode install -n mycc -v 1.1 -p github.com/chaincode/chaincode_example02/go/
+peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
 ```
 
 8. instantiate chaincode
 
 ```bash
 # w/o TLS
-peer chaincode upgrade -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.1 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
+peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 # w/ TLS
 peer chaincode instantiate -o orderer1.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 ```

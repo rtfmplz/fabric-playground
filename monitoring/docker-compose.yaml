@@ -37,8 +37,8 @@ services:
       - DATABASE_PASSWD=password
       - DISCOVERY_AS_LOCALHOST=false
     volumes:
-      - ./conf/config.json:/opt/explorer/app/platform/fabric/config.json
-      - ./connection-profile:/opt/explorer/app/platform/fabric/connection-profile
+      - ./explorer/conf/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./explorer/connection-profile:/opt/explorer/app/platform/fabric/connection-profile
       - ${FABRIC_PLAYGROUND}/crypto:/tmp/crypto
       - walletstore:/opt/wallet
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
