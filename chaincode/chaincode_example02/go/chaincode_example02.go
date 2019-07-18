@@ -34,6 +34,9 @@ import (
 type SimpleChaincode struct {
 }
 
+/**
+ * Init
+ */
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
 	_, args := stub.GetFunctionAndParameters()
@@ -72,6 +75,9 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(nil)
 }
 
+/**
+ * Invoke
+ */
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Invoke")
 	function, args := stub.GetFunctionAndParameters()
