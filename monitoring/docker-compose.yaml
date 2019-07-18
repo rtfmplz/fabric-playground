@@ -22,7 +22,7 @@ services:
       - DATABASE_USERNAME=hppoc
       - DATABASE_PASSWORD=password
     volumes:
-      - ../app/persistence/fabric/postgreSQL/db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
+      - ./explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
       - pgdata:/var/lib/postgresql/data
     networks:
       - fabric-playground
@@ -35,12 +35,10 @@ services:
       - DATABASE_HOST=explorerdb
       - DATABASE_USERNAME=hppoc
       - DATABASE_PASSWD=password
-      - ENROLL_ID=hlbeuser
       - DISCOVERY_AS_LOCALHOST=false
     volumes:
       - ./conf/config.json:/opt/explorer/app/platform/fabric/config.json
       - ./connection-profile:/opt/explorer/app/platform/fabric/connection-profile
-      - ${FABRIC_SAMPLES}/bin/:/tmp/fab-bin/
       - ${FABRIC_PLAYGROUND}/crypto:/tmp/crypto
       - walletstore:/opt/wallet
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
