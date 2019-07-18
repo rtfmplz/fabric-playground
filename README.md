@@ -10,49 +10,47 @@ curl -sSL http://bit.ly/2ysbOFE | bash -s
 
 ## BootStrap Fabric Network
 
-1. Create MSP using cryptogen
+* Create MSP using cryptogen
 
 ```bash
 cryptogen generate --config=crypto-config.yaml --output=crypto
 ```
 
-2. Create genesis.block
+* Create genesis.block
 
 ```bash
 configtxgen -profile OrgsOrdererGenesis -outputBlock genesis.block
 ```
 
-3. Create Channel Transaction
+* Create Channel Transaction
 
 ```bash
 configtxgen -profile OrgsChannel -outputCreateChannelTx ch1.tx -channelID ch1
 ```
 
-4. Create channel transaction for update Org1 anchor peer
+* Create channel transaction for update Org1 anchor peer
 
 ```bash
 configtxgen -profile OrgsChannel -outputAnchorPeersUpdate updateAnchorOrg1.tx -channelID ch1 -asOrg Org1
 ```
 
-5. BootStrap Fabric network using docker-compose
+* BootStrap Fabric network using docker-compose
 
 ```bash
 docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && rm -rf ./production
 docker rmi $(docker images | grep dev)
-
 docker-compose -f bootstrap.yaml up -d
 ```
 
-> 참고: none(untaggged) image를 지우고 싶다면?
+> ### 참고: none(untaggged) image를 지우고 싶다면?
 >
 > * docker rmi $(docker images -f "dangling=true" -q)
-
 
 ## Attach Fabric-CA
 
 > [주의] Fabcar dapp을 정상 구동하려면 채널 생성 전에 Fabric-ca를 실행해야 한다.
 
-1. Update fabric-ca.yaml
+* Update fabric-ca.yaml
 
 > 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./docker-compose/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설정한다.
 
@@ -64,15 +62,13 @@ tree crypto/peerOrganizations/org1/ca
 └── ca.org1-cert.pem
 ```
 
-1. Run Fabric-CA container
+* Run Fabric-CA container
 
 ```bash
 docker-compose -f ./docker-compose/fabric-ca.yaml up -d
 ```
 
 ## Create, join channel & update Anchor peer
-
-6. Create, join channel & update Anchor peer
 
 ```bash
 docker exec -it cli /bin/bash
@@ -96,15 +92,15 @@ peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx
 peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
-## Example02
+## Example02 for test
 
-7. install chiancode
+* install chiancode
 
 ```bash
 peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
 ```
 
-8. instantiate chaincode
+* instantiate chaincode
 
 ```bash
 # w/o TLS
@@ -117,7 +113,7 @@ peer chaincode instantiate -o orderer1.ordererorg:7050 --tls --cafile $ORDERER_O
 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 ```
 
-9. invoke chaincode
+* invoke chaincode
 
 ```bash
 # w/o TLS
@@ -126,7 +122,7 @@ peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n mycc --peerAddresses
 peer chaincode invoke -o orderer1.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
 ```
 
-10. confirm result
+* confirm result
 
 ```bash
 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
@@ -135,68 +131,6 @@ peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 > CouchDB
 >
 > * [couchdb1](http://localhost:5984/_utils/)
-
-## Fabcar
-
-> Fabcar 예제가 Fabric-CA 를 통해서 register, enroll 하는 과정을 담고 있기때문에 예제로 사용
-
-1. install & instantiate & invoke Fabcar
-
-```bash
-docker exec -it cli /bin/bash
-```
-
-```bash
-peer chaincode install -n fabcar -v 1.0 -p github.com/chaincode/fabcar/go/
-```
-
-```bash
-# w/o TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')"
-# w/ TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n fabcar -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')" --tls --cafile $ORDERER_ORG_TLSCACERTS
-```
-
-```bash
-# w/o TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}'
-# w/ TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n fabcar -c '{"function":"initLedger","Args":[""]}' --tls --cafile $ORDERER_ORG_TLSCACERTS
-```
-
-```bash
-peer chaincode query -C ch1 -n fabcar -c '{"Args":["queryAllCars"]}'
-peer chaincode query -C ch1 -n fabcar -c '{"Args":["queryCar", "CAR4"]}'
-```
-
-2. invoke & query w/ fabcar dapp
-
-> fabcar 폴더에서 진행
-
-```bash
-npm install npm@5.6.0 -g
-npm install
-```
-
-3. register & enroll
-
-```bash
-node enrollAdmin.js
-```
-
-```bash
-node registerUser.js
-```
-
-4. query & invoke
-
-```bash
-node query.js
-```
-
-```bash
-node invoke.js
-```
 
 ## peer2.org1
 
@@ -221,6 +155,7 @@ CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode install -n mycc -v 1.0 -p githu
 ```
 
 Block이 복제되면 qeury가 가능하다.
+
 ```bash
 CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 ```
