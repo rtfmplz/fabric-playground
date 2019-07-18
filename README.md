@@ -2,7 +2,7 @@
 
 ## Precondition
 
-본 문서는 Hyperledger-Fabric 1.3 을 기반으로 동작하므로 아래 스크립트를 이용해서 관련 tool, docker image 등을 다운로드 한다.
+> 본 문서는 Hyperledger-Fabric 1.4.1 을 기반으로 동작한다. 아래 스크립트를 이용해서 관련 tool, docker image 등을 다운로드 할 수 있다.
 
 ```bash
 curl -sSL http://bit.ly/2ysbOFE | bash -s
