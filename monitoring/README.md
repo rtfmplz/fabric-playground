@@ -3,12 +3,13 @@
 1. clean docker volume
 
 ```bash
-docker stop explorer explorerdb
-docker rm explorer explorerdb
-docker volume rm fabric-playground_walletstore fabric-playground_pgdata
+docker stop explorer explorerdb proms grafana
+docker rm explorer explorerdb proms grafana
+docker volume rm fabric-playground_walletstore fabric-playground_pgdata fabric-playground_grafana-storage fabric-playground_prometheus-storage
 ```
 
 2. update adminPrivateKey of Org1 in  'connection-profile/network.json'
+
 ```bash
 # in fabric-playground
 tree ../crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore/
@@ -19,7 +20,6 @@ tree ../crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore/
 3. docker-compose up
 
 ```bash
-docker stop explorer explorerdb && docker rm explorer explorerdb
 docker-compose up -d
 ```
 

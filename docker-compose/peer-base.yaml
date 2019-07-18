@@ -21,5 +21,8 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_OPERATIONS_LISTENADDRESS=127.0.0.1:9443
+      - CORE_OPERATIONS_TLS_ENABLED=false
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start

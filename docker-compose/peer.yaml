@@ -20,6 +20,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_OPERATIONS_LISTENADDRESS=peer1:9443
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto/peerOrganizations/org1/peers/peer1.org1/msp:/etc/hyperledger/fabric/msp
@@ -48,6 +49,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      - CORE_OPERATIONS_LISTENADDRESS=peer2:9443
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto/peerOrganizations/org1/peers/peer2.org1/msp:/etc/hyperledger/fabric/msp

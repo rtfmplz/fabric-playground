@@ -28,6 +28,9 @@ services:
       - ORDERER_KAFKA_VERBOSE=true
       # - ORDERER_GENERAL_GENESISPROFILE=SampleInsecureKafka
       # - ORDERER_ABSOLUTEMAXBYTES=${ORDERER_ABSOLUTEMAXBYTES}
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_OPERATIONS_LISTENADDRESS=orderer1:9443
+      - CORE_OPERATIONS_TLS_ENABLED=false
     volumes:
     - ../genesis.block:/var/hyperledger/orderer/genesis.block
     - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp

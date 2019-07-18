@@ -3,8 +3,8 @@ version: '2.1'
 volumes:
   pgdata:
   walletstore:
-  # grafana-storage:
-  # prometheus-storage:
+  grafana-storage:
+  prometheus-storage:
 
 networks:
   fabric-playground:
@@ -47,25 +47,25 @@ services:
     networks:
       - fabric-playground
 
-  # proms:
-  #   container_name: proms
-  #   image: prom/prometheus:latest
-  #   volumes:
-  #     - ../app/platform/fabric/artifacts/operations/balance-transfer/prometheus.yml:/etc/prometheus/prometheus.yml
-  #     - prometheus-storage:/prometheus
-  #   ports:
-  #     - '9090:9090'
-  #   networks:
-  #     - fabric-playground
+  proms:
+    container_name: proms
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-storage:/prometheus
+    ports:
+      - '9090:9090'
+    networks:
+      - fabric-playground
 
-  # grafana:
-  #   container_name: grafana
-  #   image: grafana/grafana:latest
-  #   volumes:
-  #     - ../app/platform/fabric/artifacts/operations/balance-transfer/balance-transfer-grafana-dashboard.json:/var/lib/grafana/dashboards/mydashboard.json
-  #     - ../app/platform/fabric/artifacts/operations/grafana_conf/provisioning:/etc/grafana/provisioning
-  #     - grafana-storage:/var/lib/grafana
-  #   ports:
-  #     - '3000:3000'
-  #   networks:
-  #     - fabric-playground
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    volumes:
+      - ./grafana/dashboard.json:/var/lib/grafana/dashboards/mydashboard.json
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana-storage:/var/lib/grafana
+    ports:
+      - '3000:3000'
+    networks:
+      - fabric-playground
