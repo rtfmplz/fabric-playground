@@ -1,14 +1,15 @@
 version: "2"
 
 networks:
-  basic:
-
+  default:
+    external:
+      name: ${DOCKER_NETWORK}
 
 ##########################################
 services:
   cli:
     extends:
-      file: docker-compose/cli.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/cli.yaml
       service: cli
     container_name: cli
     depends_on:
@@ -16,70 +17,81 @@ services:
       - peer1.org1
       - peer2.org1
     networks:
-      - basic
+      - default
+
+##########################################
+  fabric-ca:
+    extends:
+      file: ${BASE_DOCKER_COMPOSE_PATH}/fabric-ca.yaml
+      service: fabric-ca
+    container_name: fabric-ca
+    environment:
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/cbfb59fe5fdfc309479d46e76d4877f206fbf00410100f01d628aa3e4b119775_sk
+    networks:
+      - default
 
 ##########################################
   orderer1.ordererorg:
     extends:
-      file: docker-compose/orderer.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/orderer.yaml
       service: orderer
     container_name: orderer1
     depends_on:
       - kafka1
     networks:
-      - basic
+      - default
 
   kafka1:
     extends:
-      file: docker-compose/kafka.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/kafka.yaml
       service: kafka
     container_name: kafka1
     depends_on:
       - zookeeper1
     networks:
-      - basic
+      - default
 
   zookeeper1:
     extends:
-      file: docker-compose/zookeeper.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/zookeeper.yaml
       service: zookeeper
     container_name: zookeeper1
     networks:
-      - basic
+      - default
 
 ##########################################
   peer1.org1:
     extends:
-      file: docker-compose/peer.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/peer.yaml
       service: peer1
     container_name: peer1
     depends_on:
       - couchdb1
     networks:
-      - basic
+      - default
 
   peer2.org1:
     extends:
-      file: docker-compose/peer.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/peer.yaml
       service: peer2
     container_name: peer2
     depends_on:
       - couchdb1
     networks:
-      - basic
+      - default
 
   couchdb1:
     extends:
-      file: docker-compose/couchdb.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/couchdb.yaml
       service: couchdb1
     container_name: couchdb1
     networks:
-      - basic
+      - default
 
   couchdb2:
     extends:
-      file: docker-compose/couchdb.yaml
+      file: ${BASE_DOCKER_COMPOSE_PATH}/couchdb.yaml
       service: couchdb2
     container_name: couchdb2
     networks:
-      - basic
+      - default

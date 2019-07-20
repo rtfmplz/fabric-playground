@@ -7,9 +7,9 @@ volumes:
   prometheus-storage:
 
 networks:
-  fabric-playground:
+  default:
     external:
-      name: ${COMPOSE_PROJECT_NAME}_basic
+      name: ${DOCKER_NETWORK}
 
 services:
 
@@ -25,7 +25,7 @@ services:
       - ./explorer-db/createdb.sh:/docker-entrypoint-initdb.d/createdb.sh
       - pgdata:/var/lib/postgresql/data
     networks:
-      - fabric-playground
+      - default
 
   explorer:
     image: hyperledger/explorer:latest
@@ -39,13 +39,13 @@ services:
     volumes:
       - ./explorer/conf/config.json:/opt/explorer/app/platform/fabric/config.json
       - ./explorer/connection-profile:/opt/explorer/app/platform/fabric/connection-profile
-      - ${FABRIC_PLAYGROUND}/crypto:/tmp/crypto
+      - ${PROJECT_ROOT}/crypto:/tmp/crypto
       - walletstore:/opt/wallet
     command: sh -c "sleep 16&& node /opt/explorer/main.js && tail -f /dev/null"
     ports:
       - 8080:8080
     networks:
-      - fabric-playground
+      - default
 
   proms:
     container_name: proms
@@ -56,7 +56,7 @@ services:
     ports:
       - '9090:9090'
     networks:
-      - fabric-playground
+      - default
 
   grafana:
     container_name: grafana
@@ -68,4 +68,4 @@ services:
     ports:
       - '3000:3000'
     networks:
-      - fabric-playground
+      - default

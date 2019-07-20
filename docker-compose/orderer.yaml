@@ -32,9 +32,9 @@ services:
       - ORDERER_OPERATIONS_LISTENADDRESS=orderer1.ordererorg:9443
       - ORDERER_OPERATIONS_TLS_ENABLED=false
     volumes:
-    - ../genesis.block:/var/hyperledger/orderer/genesis.block
-    - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp
-    - ../crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/tls/:/var/hyperledger/orderer/tls
-    - ../production/orderer:/var/hyperledger/production/
+    - ${PROJECT_ROOT}/genesis.block:/var/hyperledger/orderer/genesis.block
+    - ${PROJECT_ROOT}/crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp
+    - ${PROJECT_ROOT}/crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/tls/:/var/hyperledger/orderer/tls
+    - ${PROJECT_ROOT}/production/orderer:/var/hyperledger/production/
     ports:
       - 7050:7050
