@@ -1,163 +1,42 @@
-# README
+# Fabric-Playground
 
-## Precondition
+개인적인 관심으로 Hyperledger-Fabric의 기능들을 테스트하고, Dapp을 개발하기 위한 공간입니다.
 
-> 본 문서는 Hyperledger-Fabric 1.4.1 을 기반으로 동작한다. 아래 스크립트를 이용해서 관련 tool, docker image 등을 다운로드 할 수 있다.
+2019년 7월 기준 Hyperledger-Fabric 1.4 기반으로 동작합니다.
 
-```bash
-curl -sSL http://bit.ly/2ysbOFE | bash -s
-```
+필요한 환경 및 Binary, Docker image, SDK에 대한 정보는 아래 Link에서 얻을 수 있습니다.
 
-## BootStrap Fabric Network
+* [[release 1.4] Prerequisites](https://hyperledger-fabric.readthedocs.io/en/release-1.4/prereqs.html)
+* [[release 1.4] Install Samples, Binaries and Docker Images](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
+* [[release 1.4] SDK & CA](https://hyperledger-fabric.readthedocs.io/en/release-1.4/getting_started.html#hyperledger-fabric-sdks)
 
-* Create MSP using cryptogen
+## Consist of
 
-```bash
-cryptogen generate --config=crypto-config.yaml --output=crypto
-```
+### [`network`](https://github.com/rtfmplz/fabric-playground/tree/master/network)
 
-* Create genesis.block
+* 다양한 구성의 Fabric Network를 Docker Compose 를 이용해서 구성할 수 있다.
 
-```bash
-configtxgen -profile OrgsOrdererGenesis -outputBlock genesis.block
-```
+### [`docker-compose`](https://github.com/rtfmplz/fabric-playground/tree/master/docker-compose)
 
-* Create Channel Transaction
+* network 및 기타 example들이 사용하는 docker-compose 파일들
 
-```bash
-configtxgen -profile OrgsChannel -outputCreateChannelTx ch1.tx -channelID ch1
-```
+### [`chaincode`](https://github.com/rtfmplz/fabric-playground/tree/master/chaincode)
 
-* Create channel transaction for update Org1 anchor peer
+* chaincode_example02, fabcar 등 Fabric의 기본 예제로 사용되는 chaincode들과 테스트 및 개인적인 목적으로 작성한 chaincode들
 
-```bash
-configtxgen -profile OrgsChannel -outputAnchorPeersUpdate updateAnchorOrg1.tx -channelID ch1 -asOrg Org1
-```
+### [`dapps`](https://github.com/rtfmplz/fabric-playground/tree/master/dapps)
 
-* BootStrap Fabric network using docker-compose
+* chaincode를 동작시키는 dapp들 (chaincode 폴더 명과 동일한 이름으로 구성되어 있다.)
 
-```bash
-docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && rm -rf ./production
-docker rmi $(docker images | grep dev)
-docker-compose up -d
-```
+### [`examples`](https://github.com/rtfmplz/fabric-playground/tree/master/examples)
 
-> ### 참고: none(untaggged) image를 지우고 싶다면?
->
-> * docker rmi $(docker images -f "dangling=true" -q)
+* network, dapp 등을 구현하는데 사용된 기술들을 검증하기 위한 간단한 샘플들
 
-## Attach Fabric-CA
+### [`monitoring`](https://github.com/rtfmplz/fabric-playground/tree/master/monitoring)
 
-> [주의] Fabcar dapp을 정상 구동하려면 채널 생성 전에 Fabric-ca를 실행해야 한다.
+* Fabric network를 모니터링 하기 위한 툴 들, [blockchain-explorer](https://github.com/hyperledger/blockchain-explorer)를
+바탕으로 본 프로젝트의 `network`에서 사용 가능하도록 수정 됨
 
-* Update fabric-ca.yaml
+### [`scripts`](https://github.com/rtfmplz/fabric-playground/tree/master/scripts)
 
-> 아래 tree 명령 실행해서 출력되는 sk 파일의 이름을 ./docker-compose/fabric-ca.yaml 파일의 FABRIC_CA_SERVER_CA_KEYFILE 에 설
-
-정한다.
-
-tree crypto/peerOrganizations/org1/ca
-
-```bash
-tree crypto/peerOrganizations/org1/ca
-├── 0e47f93b7ae251a8f1613b003362ef828901959642aa004bbbc4ab719eab1be7_sk
-└── ca.org1-cert.pem
-```
-
-* Run Fabric-CA container
-
-```bash
-docker-compose -f ./docker-compose/fabric-ca.yaml up -d
-```
-
-## Create, join channel & update Anchor peer
-
-```bash
-docker exec -it cli /bin/bash
-```
-
-```bash
-# w/o TLS
-peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx
-# w/ TLS
-peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
-```
-
-```bash
-peer channel join -b ch1.block
-```
-
-```bash
-# w/o TLS
-peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx
-# w/ TLS
-peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
-```
-
-## Example02 for test
-
-* install chiancode
-
-```bash
-peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
-```
-
-* instantiate chaincode
-
-```bash
-# w/o TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
-# w/ TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
-```
-
-```bash
-peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
-```
-
-* invoke chaincode
-
-```bash
-# w/o TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
-# w/ TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
-```
-
-* confirm result
-
-```bash
-peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
-```
-
-> CouchDB
->
-> * [couchdb1](http://localhost:5984/_utils/)
-
-## peer2.org1
-
-여기까지 진행하면 peer2.org1의 WorldState([couchdb2](http://localhost:6984/_utils/)) 에는 데이터가 없는 것을 확인 할 수 있다.
-
-peer2가 ch1에 join 되지 않았기 때문이다.
-
-```bash
-CORE_PEER_ADDRESS=peer2.org1:7051 peer channel list
-```
-
-peer2를 channel(ch1)에 join 시키면 Block이 복제되고, 데이터를 확인 할 수 있다.
-
-```bash
-CORE_PEER_ADDRESS=peer2.org1:7051 peer channel join -b ch1.block
-```
-
-Install chaincode
-
-```bash
-CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
-```
-
-Block이 복제되면 qeury가 가능하다.
-
-```bash
-CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
-```
+* Project를 위해 필요한 간단한 Script들을 제공
