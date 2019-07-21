@@ -6,7 +6,7 @@
 
 * docker-compose up
 
-```
+```bash
 docker-compose -f docker-compose-greeter.yaml up [--build]
 ```
 
@@ -15,14 +15,14 @@ docker-compose -f docker-compose-greeter.yaml up [--build]
 #### Config
 
 * W/O TLS
-    * `.env`: `TLS=OFF`
+  * `.env`: `TLS=OFF`
 * NGINX Layer 7 load balancing
-    * ./greeter_server/nginx/nginx.conf
-        * include /etc/nginx/conf.d/gw-http-inbound.conf;
-        * #include	/etc/nginx/conf.d/gw-stream-outbound.conf;
-    * ./greeter_client/nginx/nginx.conf
-        * include /etc/nginx/conf.d/gw-http-inbound.conf;
-        * #include	/etc/nginx/conf.d/gw-stream-outbound.conf;
+  * ./greeter_server/nginx/nginx.conf
+    * include /etc/nginx/conf.d/gw-http-inbound.conf;
+    * #include  /etc/nginx/conf.d/gw-stream-outbound.conf;
+  * ./greeter_client/nginx/nginx.conf
+    * include /etc/nginx/conf.d/gw-http-inbound.conf;
+    * #include  /etc/nginx/conf.d/gw-stream-outbound.conf;
 
 > Layer 7 load balancing 설정 상태에서 `TLS=ON` 으로 환경변수를 설정하면 아래와 같은 error 가 발생한다.
 >
@@ -46,18 +46,18 @@ greeter-example_greeter_client_1 exited with code 0
 #### Config
 
 * W/O TLS
-    * `.env`: `TLS=ON`
+  * `.env`: `TLS=ON`
 * NGINX Layer 4 load balancing
-    * ./greeter_server/nginx/nginx.conf
-        * #include /etc/nginx/conf.d/gw-http-inbound.conf;
-        * include	/etc/nginx/conf.d/gw-stream-outbound.conf;
-    * ./greeter_client/nginx/nginx.conf
-        * #include /etc/nginx/conf.d/gw-http-inbound.conf;
-        * include	/etc/nginx/conf.d/gw-stream-outbound.conf;
+  * ./greeter_server/nginx/nginx.conf
+    * #include /etc/nginx/conf.d/gw-http-inbound.conf;
+    * include /etc/nginx/conf.d/gw-stream-outbound.conf;
+  * ./greeter_client/nginx/nginx.conf
+    * #include /etc/nginx/conf.d/gw-http-inbound.conf;
+    * include /etc/nginx/conf.d/gw-stream-outbound.conf;
 
 #### Result
 
-```
+```bash
 greeter_server_1  | 2019/06/24 16:03:43 Received: world
 greeter_client_1  | 2019/06/24 16:03:43 Greeting: Hello world
 greeter-example_greeter_client_1 exited with code 0
