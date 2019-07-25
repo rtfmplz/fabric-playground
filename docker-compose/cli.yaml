@@ -18,11 +18,12 @@ services:
       - CORE_PEER_ID=cli
       - CORE_PEER_ADDRESS=peer1.org1:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
+
       - CORE_PEER_TLS_ENABLED=true
-      # - CORE_PEER_TLS_ENABLED=false
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt
+      
       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/users/Admin@org1/msp
       - ORDERER_ORG_TLSCACERTS=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/ordererorg/msp/tlscacerts/tlsca.ordererorg-cert.pem
     volumes:
