@@ -12,8 +12,8 @@ services:
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${DOCKER_NETWORK}
       - CORE_LOGGING_LEVEL=INFO
       # - CORE_LOGGING_LEVEL=DEBUG
-      # - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_ENABLED=false
+      - CORE_PEER_TLS_ENABLED=true
+      # - CORE_PEER_TLS_ENABLED=false
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
       - CORE_PEER_GOSSIP_ORGLEADER=false
       - CORE_PEER_PROFILE_ENABLED=true
@@ -22,6 +22,12 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
       - CORE_METRICS_PROVIDER=prometheus
       - CORE_OPERATIONS_LISTENADDRESS=127.0.0.1:9443
-      - CORE_OPERATIONS_TLS_ENABLED=false
+      # true 설정시, "Error: failed to initialize operations subystems: open : no such file or directory"
+      - CORE_OPERATIONS_TLS_ENABLED=true
+      # - CORE_OPERATIONS_TLS_ENABLED=false
+      - CORE_OPERATIONS_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_OPERATIONS_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_OPERATIONS_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_OPERATIONS_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/fabric/tls/ca.crt
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start

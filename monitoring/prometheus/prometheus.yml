@@ -32,4 +32,5 @@ scrape_configs:
 
     static_configs:
     - targets: ['localhost:8443','localhost:9443','localhost:9444','localhost:9445','localhost:9446']
-    - targets: ['orderer1:9443', 'peer1:9443', 'peer2:9443']
+    # TLS ON
+    - targets: ['https:orderer1:9443', 'https:peer1:9443', 'https:peer2:9443']

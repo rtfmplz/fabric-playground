@@ -2,7 +2,7 @@
 	"name": "fabric-playground",
 	"version": "1.0.0",
 	"client": {
-		"tlsEnable": false,
+		"tlsEnable": true,
 		"adminUser": "admin",
 		"adminPassword": "admin",
 		"enableAuthentication": false,
@@ -37,7 +37,7 @@
 			"mspid": "Org1MSP",
 			"fullpath": false,
 			"adminPrivateKey": {
-				"path": "/tmp/crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore/1112270e860c8d4b31efb5081ee6aa54306c615c9ed6ffa5fecdc166629ac2d5_sk"
+				"path": "/tmp/crypto/peerOrganizations/org1/users/Admin@org1/msp/keystore/04b2d7d21ff3f2f82299cbeda0daf647a5e6bda08a2458d43fe6c24ea8ee6d20_sk"
 			},
 			"signedCert": {
 				"path": "/tmp/crypto/peerOrganizations/org1/users/Admin@org1/msp/signcerts/Admin@org1-cert.pem"
@@ -49,8 +49,8 @@
 			"tlsCACerts": {
 				"path": "/tmp/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt"
 			},
-			"url": "grpc://peer1.org1:7051",
-			"eventUrl": "grpc://peer1.org1:7053",
+			"url": "grpcs://peer1.org1:7051",
+			"eventUrl": "grpcs://peer1.org1:7053",
 			"grpcOptions": {
 				"ssl-target-name-override": "peer1.org1"
 			}

@@ -14,8 +14,8 @@ services:
       - ORDERER_GENERAL_LOCALMSPID=OrdererOrgMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
-      # - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_ENABLED=false
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      # - ORDERER_GENERAL_TLS_ENABLED=false
       - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
@@ -26,15 +26,20 @@ services:
       - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
       - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
       - ORDERER_KAFKA_VERBOSE=true
-      # - ORDERER_GENERAL_GENESISPROFILE=SampleInsecureKafka
-      # - ORDERER_ABSOLUTEMAXBYTES=${ORDERER_ABSOLUTEMAXBYTES}
+
       - ORDERER_METRICS_PROVIDER=prometheus
       - ORDERER_OPERATIONS_LISTENADDRESS=orderer1.ordererorg:9443
-      - ORDERER_OPERATIONS_TLS_ENABLED=false
+      # true 설정시, "Error: failed to initialize operations subystems: open : no such file or directory"
+      - ORDERER_OPERATIONS_TLS_ENABLED=true
+      # - ORDERER_OPERATIONS_TLS_ENABLED=false
+      - ORDERER_OPERATIONS_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_OPERATIONS_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_OPERATIONS_TLS_CLIENTAUTHREQUIRED=true
+      - ORDERER_OPERATIONS_TLS_CLIENTROOTCAS="[/var/hyperledger/orderer/tls/ca.crt]"
     volumes:
     - ${PROJECT_ROOT}/genesis.block:/var/hyperledger/orderer/genesis.block
     - ${PROJECT_ROOT}/crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp
-    - ${PROJECT_ROOT}/crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/tls/:/var/hyperledger/orderer/tls
+    - ${PROJECT_ROOT}/crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/tls:/var/hyperledger/orderer/tls
     - ${PROJECT_ROOT}/production/orderer:/var/hyperledger/production/
     ports:
       - 7050:7050
