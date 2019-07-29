@@ -11,11 +11,9 @@ services:
       - 10514:10514/udp
     volumes:
       - "./rsyslog.conf:/etc/rsyslog.conf"
-      - "./logs:/var/log/syslog"
+      - "./log/nginx:/var/log/syslog"
     command: /sbin/rsyslogd -n
-    networks:
-      - basic
-    
+
   rsyslog_nginx:
     image: nginx
     container_name: rsyslog_nginx
@@ -25,10 +23,11 @@ services:
       # @see https://docs.docker.com/config/containers/logging/syslog/
       driver: syslog
       options:
-        syslog-address: "udp://localhost:10514"
+        # @ see https://docs.docker.com/docker-for-mac/networking/
+        # >> I WANT TO CONNECT TO A CONTAINER FROM THE MAC
+        syslog-address: "udp://host.docker.internal:10514"
         syslog-facility: "local0"
         tag: "{{.Name}}"
-    networks:
-      - basic
+
     depends_on:
       - rsyslog
