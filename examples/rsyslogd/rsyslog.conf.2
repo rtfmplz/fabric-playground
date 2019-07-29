@@ -1,13 +1,13 @@
-module(load="imtcp")
+module(load="imudp")
 
 # https://rsyslog.com/doc/v8-stable/configuration/templates.html
 # https://rsyslog.com/doc/v8-stable/configuration/properties.html
 # programname == docker logging tag {{.Name}}
-template(name="DockerLogRuleTemplate") type="string" string="/var/log/syslog/%programname:::secpath-replace%/%syslogseverity-text%-%$year%-%$month%-%$day%.log")
+template(name="DockerLogRuleTemplate" type="string" string="/var/log/syslog/%programname:::secpath-replace%/%syslogseverity-text%-%$year%-%$month%-%$day%.log")
 
 ruleset(name="DockerLogRule") {
   # https://rsyslog.com/doc/v8-stable/configuration/modules/omfile.html
-  action(type="omfile" dynFile="DockerLogRuleTemplate")
+  action(type="omfile" dynaFile="DockerLogRuleTemplate") #fileOwner="user1" fileGroup="group1"
 }
 
-input(type="imtcp" port="10514" ruleset="DockerLogRule")
+input(type="imudp" port="10514" ruleset="DockerLogRule")
