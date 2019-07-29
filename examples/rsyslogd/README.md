@@ -39,37 +39,36 @@ services:
     image: rsyslog/rsyslog_base_centos7
     container_name: rsyslog
     ports:
-        - 10514:10514
+      - 10514:10514/udp
     volumes:
-        - "./rsyslog.conf:/etc/rsyslog.conf"
-        - "./log/nginx:/var/log/nginx"
+      - "./rsyslog.conf:/etc/rsyslog.conf"
+      - "./log/nginx:/var/log/syslog"
     command: /sbin/rsyslogd -n
-    networks:
-        - basic
 
   rsyslog_nginx:
     image: nginx
     container_name: rsyslog_nginx
     ports:
-        - 8080:80
+      - 8080:80
     logging:
       # @see https://docs.docker.com/config/containers/logging/syslog/
       driver: syslog
       options:
-        syslog-address: "udp://localhost:10514"
+        # @ see https://docs.docker.com/docker-for-mac/networking/
+        # >> I WANT TO CONNECT TO A CONTAINER FROM THE MAC
+        syslog-address: "udp://host.docker.internal:10514"
         syslog-facility: "local0"
         tag: "{{.Name}}"
-    networks:
-        - basic
+
     depends_on:
-        - rsyslog
+      - rsyslog
 ```
 
 ### rsyslog.conf.template
 
 ```yaml
-module(load="imtcp")
-input(type="imtcp" port="10514")
+module(load="imudp")
+input(type="imudp" port="10514")
 
 #local0.* /var/log/nginx/nginx.log
 local0.debug;local0.info;local0.notice /var/log/nginx/access.log
