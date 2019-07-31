@@ -18,6 +18,7 @@
 	},
 	"channels": {
 		"ch1": {
+			"orderers": ["orderer1.ordererorg"],
 			"peers": {
 				"peer1.org1": {}
 			},
