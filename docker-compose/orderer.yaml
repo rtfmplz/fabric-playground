@@ -32,7 +32,7 @@ services:
       - ORDERER_OPERATIONS_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_OPERATIONS_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
       - ORDERER_OPERATIONS_TLS_CLIENTAUTHREQUIRED=true
-      - ORDERER_OPERATIONS_TLS_CLIENTROOTCAS="[/var/hyperledger/orderer/tls/ca.crt]"
+      - ORDERER_OPERATIONS_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
     volumes:
     - ${PROJECT_ROOT}/genesis.block:/var/hyperledger/orderer/genesis.block
     - ${PROJECT_ROOT}/crypto/ordererOrganizations/ordererorg/orderers/orderer1.ordererorg/msp:/var/hyperledger/orderer/msp
