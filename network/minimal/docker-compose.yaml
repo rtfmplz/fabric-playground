@@ -26,7 +26,7 @@ services:
       service: fabric-ca
     container_name: fabric-ca
     environment:
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/357562d49c2d9dd4b4f2e5e86018f72021413a6e65a6627779702e97f5d6090c_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${FABRIC_CA_SERVER_CA_KEYFILE}
     networks:
       - default
 
