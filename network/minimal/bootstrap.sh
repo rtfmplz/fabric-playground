@@ -55,12 +55,12 @@ configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${ANCHOR_PEER_UPDATE_T
 sleep ${INTERVAL}
 
 ##############################################################
-# Remove ledgerdata & docker-compose stop
+# Remove ledgerdata & docker-compose down
 ##############################################################
 if [ -e ./${PRODUCTION_DIR} ]; then
   rm -rf ./${PRODUCTION_DIR}
 fi
-docker-compose stop
+docker-compose down
 sleep ${INTERVAL}
 
 ##############################################################
