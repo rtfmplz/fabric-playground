@@ -29,6 +29,7 @@
                 "peer1.org1",
                 "peer2.org1"
             ],
+			"fullpath": false,
             "certificateAuthorities": [
                 "fabric-ca"
             ]
@@ -36,12 +37,18 @@
     },
     "orderers": {
         "orderer1": {
-            "url": "grpc://localhost:7050"
+            "url": "grpcs://orderer1.ordererorg:7050",
+			"tlsCACerts": {
+				"path": "./crypto/ordererOrganizations/ordererorg/tlsca/tlsca.ordererorg-cert.pem"
+			}
         }
     },
     "peers": {
         "peer1.org1": {
-            "url": "grpc://localhost:7051"
+            "url": "grpcs://peer1.org1:7051",
+			"tlsCACerts": {
+				"path": "./crypto/peerOrganizations/org1/tlsca/tlsca.org1-cert.pem"
+			}
         }
     },
     "certificateAuthorities": {
