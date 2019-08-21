@@ -24,7 +24,7 @@ services:
             # upstream 해야할 서버가 통신이 안되면 비정상 종료됨
             - greeter_server
    
-     client_gw:
+    client_gw:
         image: nginx
         container_name: client_gw
         volumes:
