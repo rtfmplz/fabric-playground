@@ -20,8 +20,11 @@ services:
             internet:
                 aliases:
                     - "greeter.server.gw"
-
-    client_gw:
+        depends_on:
+            # upstream 해야할 서버가 통신이 안되면 비정상 종료됨
+            - greeter_server
+   
+     client_gw:
         image: nginx
         container_name: client_gw
         volumes:
@@ -34,6 +37,9 @@ services:
             internet:
                 aliases:
                     - "greeter.client.gw"
+        depends_on:
+            # upstream 해야할 서버가 통신이 안되면 비정상 종료됨
+            - greeter_server
  
     greeter_server:
         container_name: greeter_server
@@ -51,9 +57,6 @@ services:
             server_net:
                 aliases:
                     - "greeter.server"
-        depends_on:
-            - server_gw
-            - client_gw
 
     greeter_client:
         container_name: greeter_client
@@ -72,4 +75,4 @@ services:
                 aliases:
                     - "greeter.client"
         depends_on:
-            - greeter_server
+            - server_gw
