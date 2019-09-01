@@ -1,0 +1,107 @@
+user nginx;
+worker_processes auto;
+
+error_log /var/log/nginx/error.log info;
+pid /var/run/nginx.pid;
+
+events {
+	use epoll;
+	worker_connections 4096;
+}
+
+stream {
+	log_format stream_routing	'[$time_local] $status '
+								'$remote_addr:$remote_port '
+								'-> $server_addr:$server_port'
+								'-> "$ssl_preread_server_name" ($upstream_addr) '
+								'pid=$pid *$connection';
+
+	access_log /var/log/nginx/access.log stream_routing;
+
+	# outbound
+	
+	# TCP proxy (TLS Passthrough)
+	server {
+		listen 7051 reuseport so_keepalive=90s::10;
+		
+		# TLS SNI
+		ssl_preread on;
+
+		# proxy to upstream
+		proxy_pass $selected_outbound_stream;
+		proxy_socket_keepalive on;
+		proxy_connect_timeout 10s;
+		proxy_timeout 3m;
+	}
+
+	# upstreams by TLS SNI
+	map $ssl_preread_server_name $selected_outbound_stream {
+		~*peer[0-9].org1 upstream_org2_gw;
+
+	}
+
+
+	# inbound
+
+	# TCP Proxy (TLS Passthrough)
+	server {
+		listen 57050-57051 reuseport so_keepalive=90s::10;
+
+		#allow ${ALLOW_IP}
+		#deny all;
+
+		
+		# proxy to upstream
+		proxy_pass $selected_inbound_stream;
+		proxy_socket_keepalive on;
+		proxy_connect_timeout 3s;
+		proxy_timeout 3m;
+	}
+
+	map $ssl_preread_server_name $selected_inbound_stream {
+		~*orderer(?<no>[0-9]).ordererorg upstream_ordererorg_orderer$no;
+		~*peer(?<no>[0-9]).org1 upstream_org1_peer$no;
+	}
+
+	upstream upstream_ordererorg_orderer0 {
+		server ${NGX_ORDERER0_IP}:7050;
+	}
+
+
+	upstream upstream_org1_peer0 {
+		server ${NGX_ORG1_PEER0_IP}:7051;
+	}
+
+
+	upstream upstream_org1_peer1 {
+		server ${NGX_ORG1_PEER1_IP}:8051;
+	}
+
+}
+
+http {
+	server_tokens off;
+
+	server {
+		listen 57999;
+
+
+		location /health {
+			access_log off;
+			default_type text/plain;
+			return 200 "OK";
+		}
+
+		location /status {
+			access_log off;
+			stub_status;
+		}
+
+		location / {
+			return 444;
+		}
+	}
+
+
+}
+

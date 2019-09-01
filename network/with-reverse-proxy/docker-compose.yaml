@@ -1,0 +1,32 @@
+version: "3"
+
+networks:
+  default:
+    external:
+        name: ${DOCKER_NETWORK}
+
+services:
+
+    org1_gw:
+        image: nginx:latest
+        container_name: org1_gw
+        restart: always
+        #network_mode: host
+        ports:
+            - "57050:57050"
+            - "57051:57051"
+            - "57999:57999"
+            #- "7050:7050"
+            #- "7051:7051"
+
+        volumes:
+            - "./nginx-gw.conf.template:/etc/nginx/nginx-gw.conf.template:ro"
+
+        environment:
+            NGX_ORDERER0_IP: orderer1
+            # NGX_ORDERER1_IP: 10.0.0.2
+            NGX_ORG1_PEER0_IP: peer1
+            NGX_ORG1_PEER1_IP: peer2
+            NGX_TEST_GW_IP: 127.0.0.1
+
+        command: /bin/bash -c "envsubst \"`env | grep NGX_ | awk -F = '{ printf \" $$%s\", $$1}'`\" < /etc/nginx/nginx-gw.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
