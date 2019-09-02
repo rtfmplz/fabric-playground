@@ -36,8 +36,7 @@ stream {
 
 	# upstreams by TLS SNI
 	map $ssl_preread_server_name $selected_outbound_stream {
-		~*peer[0-9].org1 upstream_org2_gw;
-
+		~*peer[0-9].org2 upstream_org2_gw;
 	}
 
 
@@ -50,6 +49,7 @@ stream {
 		#allow ${ALLOW_IP}
 		#deny all;
 
+		ssl_preread on;
 		
 		# proxy to upstream
 		proxy_pass $selected_inbound_stream;
@@ -63,18 +63,18 @@ stream {
 		~*peer(?<no>[0-9]).org1 upstream_org1_peer$no;
 	}
 
-	upstream upstream_ordererorg_orderer0 {
-		server ${NGX_ORDERER0_IP}:7050;
-	}
-
-
-	upstream upstream_org1_peer0 {
-		server ${NGX_ORG1_PEER0_IP}:7051;
+	upstream upstream_ordererorg_orderer1 {
+		server ${NGX_ORDERER1_IP}:7050;
 	}
 
 
 	upstream upstream_org1_peer1 {
-		server ${NGX_ORG1_PEER1_IP}:8051;
+		server ${NGX_ORG1_PEER1_IP}:7051;
+	}
+
+
+	upstream upstream_org1_peer2 {
+		server ${NGX_ORG1_PEER2_IP}:7051;
 	}
 
 }

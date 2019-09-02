@@ -23,10 +23,12 @@ services:
             - "./nginx-gw.conf.template:/etc/nginx/nginx-gw.conf.template:ro"
 
         environment:
-            NGX_ORDERER0_IP: orderer1
-            # NGX_ORDERER1_IP: 10.0.0.2
-            NGX_ORG1_PEER0_IP: peer1
-            NGX_ORG1_PEER1_IP: peer2
+            #NGX_ORDERER0_IP: 172.22.0.9
+            #NGX_ORG1_PEER0_IP: 172.22.0.8
+            #NGX_ORG1_PEER1_IP: 172.22.0.7
+            NGX_ORDERER1_IP: orderer1.ordererorg
+            NGX_ORG1_PEER1_IP: peer1.org1
+            NGX_ORG1_PEER2_IP: peer2.org1
             NGX_TEST_GW_IP: 127.0.0.1
 
         command: /bin/bash -c "envsubst \"`env | grep NGX_ | awk -F = '{ printf \" $$%s\", $$1}'`\" < /etc/nginx/nginx-gw.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
