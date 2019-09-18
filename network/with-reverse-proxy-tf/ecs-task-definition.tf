@@ -7,7 +7,10 @@ data "aws_ecs_task_definition" "nginx" {
 
 resource "aws_ecs_task_definition" "nginx" {
   family = "nginx"
-
+  volume {
+    name = "my-vol"
+    host_path = "/tmp/service-vol"
+  }
   container_definitions = <<DEFINITION
   [
     {
@@ -22,7 +25,13 @@ resource "aws_ecs_task_definition" "nginx" {
             "hostPort": 80,
             "protocol": "tcp"
           }
-        ]
+        ],
+		"MountPoints": [
+		  {
+		    "SourceVolume": "my-vol",
+			"ContainerPath": "/var/my-vol"
+		  }
+		]
     }
   ]
   DEFINITION

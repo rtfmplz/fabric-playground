@@ -21,6 +21,7 @@ resource "aws_launch_configuration" "webserver-ecs-launch-configuration" {
   user_data = <<EOF
 #!/bin/bash
 echo ECS_CLUSTER=${lookup(var.ecs_cluster_names, "public")} >> /etc/ecs/ecs.config
+echo "test" > /tmp/service-vol/test
 EOF
 }
 
