@@ -23,7 +23,6 @@ resource "aws_lb_target_group" "public-lb-target-group" {
   protocol    = "TCP"
   target_type = "instance"
   vpc_id   = "${aws_vpc.vpc.id}"
-  proxy_protocol_v2 = true
 
   health_check {
     healthy_threshold   = "3"
