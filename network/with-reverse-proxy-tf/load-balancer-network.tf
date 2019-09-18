@@ -1,6 +1,3 @@
-# load-balancer-application은 정상 동작하는데.. 이건 400 error가 난다... 확인 필요!!
-
-
 ##############################################################################
 # PUBLIC Zone Load Balancing
 ##############################################################################
@@ -23,13 +20,6 @@ resource "aws_lb_target_group" "public-lb-target-group" {
   protocol    = "TCP"
   target_type = "instance"
   vpc_id   = "${aws_vpc.vpc.id}"
-
-  health_check {
-    healthy_threshold   = "3"
-    interval            = "30"
-    port                = "traffic-port"
-    protocol            = "TCP"
-  }
 
   depends_on = [
     "aws_lb.public-load-balancer",
