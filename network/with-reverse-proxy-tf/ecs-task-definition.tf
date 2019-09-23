@@ -57,8 +57,8 @@ resource "aws_ecs_task_definition" "peer" {
         "essential": true,
         "portMappings": [
           {
-            "containerPort": 8080,
-            "hostPort": 8080,
+            "containerPort": 7051,
+            "hostPort": 7051,
             "protocol": "tcp"
           }
         ]

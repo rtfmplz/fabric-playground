@@ -101,6 +101,12 @@ resource "aws_route_table_association" "public-route-table-assoc" {
 resource "aws_route_table" "private-route-table" {
   vpc_id = "${aws_vpc.vpc.id}"
 
+  # [FIXME] 구현 중 ssh 접근을 통한 정상 동작 확인을 위해서 임시로 설정
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.igw.id}"
+  }
+
   tags = {
     Name = "private-route-table"
   }

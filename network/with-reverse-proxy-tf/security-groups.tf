@@ -149,8 +149,43 @@ resource "aws_security_group" "appserver-sg" {
   vpc_id      = "${aws_vpc.vpc.id}"
 
   ingress {
+    from_port   = 22            // nginx-test
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80            // nginx-test
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443           // https
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 57999          // heath check
     to_port     = 57999
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 80            // http
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 443           // https
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -176,10 +211,17 @@ resource "aws_security_group" "appserver-sg" {
   #   cidr_blocks = ["0.0.0.0/0"]
   # }
 
-  # egress {
-  #   from_port   = 7051            // peer
-  #   to_port     = 57051
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
+  egress {
+    from_port   = 7051            // peer
+    to_port     = 57051
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    ingress {
+    from_port   = 7051            // peer
+    to_port     = 57051
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
