@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+
+    org3_gw:
+        image: nginx:latest
+        container_name: org3_gw
+        restart: always
+        ports:
+            #- "57050:57050"
+            - "57051:57051"
+            - "57999:57999"
+            - "7050:7050"
+            - "7051:7051"
+
+        volumes:
+            - "/tmp/nginx-gw.conf.template:/etc/nginx/nginx-gw.conf.template:ro"
+
+        environment:
+            NGX_ORG3_PEER0_IP: ${NGX_ORG3_PEER0_IP}
+            NGX_ORG3_PEER1_IP: ${NGX_ORG3_PEER1_IP}
+            NGX_ORDERER_GW_IP: ${NGX_ORDERER_GW_IP}
+            NGX_ORG1_GW_IP: ${NGX_ORG1_GW_IP}
+            NGX_TEST_GW_IP: 127.0.0.1
+
+        command: /bin/bash -c "envsubst \"`env | grep NGX_ | awk -F = '{ printf \" $$%s\", $$1}'`\" < /etc/nginx/nginx-gw.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"

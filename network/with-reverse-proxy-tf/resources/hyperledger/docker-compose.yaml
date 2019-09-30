@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  peer0:
+    image: hyperledger/fabric-peer:latest
+    container_name: peer0
+    command: peer node start
+    environment:
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/tmp/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/tmp/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/tmp/hyperledger/fabric/tls/ca.crt
+    ports:
+      - "7051:7051"
+    volumes:
+      - /tmp/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp:/tmp/hyperledger/fabric/msp
+      - /tmp/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls:/tmp/hyperledger/fabric/tls
+    

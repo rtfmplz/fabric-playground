@@ -12,8 +12,8 @@ resource "aws_instance" "fabric0"{
 	user_data = "${file(lookup(var.resources_path, "private-user-data"))}"
 
 	provisioner "file" {
-		source = "./resources/docker-compose.yaml"
-		destination = "/tmp/docker-compose.yaml"
+		source = "./resources/hyperledger/"
+		destination = "/tmp/"
 
 		connection {
 	 		type = "ssh"
@@ -56,8 +56,8 @@ resource "aws_instance" "fabric1"{
 	user_data = "${file(lookup(var.resources_path, "private-user-data"))}"
 
 	provisioner "file" {
-	 	source = "./resources/docker-compose.yaml"
-	 	destination = "/tmp/docker-compose.yaml"
+	 	source = "./resources/hyperledger/"
+	 	destination = "/tmp/"
 
 	 	connection {
 	 		type = "ssh"

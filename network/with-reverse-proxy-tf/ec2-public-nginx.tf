@@ -12,8 +12,8 @@ resource "aws_instance" "gateway0"{
 	user_data = "${file(lookup(var.resources_path, "public-user-data"))}"
 
 	provisioner "file" {
-		source = "./resources/docker-compose.yaml"
-	 	destination = "/tmp/docker-compose.yaml"
+		source = "./resources/nginx/"
+	 	destination = "/tmp/"
 
 	 	connection {
 	 		type = "ssh"
@@ -25,11 +25,14 @@ resource "aws_instance" "gateway0"{
 
 	provisioner "remote-exec" {
 	 	inline = [
-	 		"echo ${self.private_ip} > /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORDERER_GW_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG1_GW_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
 			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
 			"sudo chmod +x /usr/local/bin/docker-compose",
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
-	 		"docker-compose -f /tmp/docker-compose.yaml up -d",
+	 		"cd /tmp; docker-compose -f /tmp/docker-compose.yaml up -d",
 	 	]
 		
 	 	connection {
@@ -57,8 +60,8 @@ resource "aws_instance" "gateway1"{
 	user_data = "${file(lookup(var.resources_path, "public-user-data"))}"
 
 	provisioner "file" {
-	 	source = "./resources/docker-compose.yaml"
-	 	destination = "/tmp/docker-compose.yaml"
+	 	source = "./resources/nginx/"
+	 	destination = "/tmp/"
 
 	 	connection {
 	 		type = "ssh"
@@ -70,11 +73,14 @@ resource "aws_instance" "gateway1"{
 
 	provisioner "remote-exec" {
 	 	inline = [
-	 		"echo ${self.private_ip} > /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORDERER_GW_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG1_GW_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
 			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
 			"sudo chmod +x /usr/local/bin/docker-compose",
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
-	 		"docker-compose -f /tmp/docker-compose.yaml up -d",
+	 		"pushd /tmp ; docker-compose -f /tmp/docker-compose.yaml up -d ; popd",
 	 	]
 		
 	 	connection {

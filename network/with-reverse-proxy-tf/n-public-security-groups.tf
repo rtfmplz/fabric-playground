@@ -27,8 +27,8 @@ resource "aws_security_group" "public-sg" {
 
   ingress {
     description = "for peer"
-    from_port   = 57050
-    to_port     = 57050
+    from_port   = 57051
+    to_port     = 57051
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
