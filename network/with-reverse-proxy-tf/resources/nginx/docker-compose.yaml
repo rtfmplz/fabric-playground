@@ -17,6 +17,7 @@ services:
             - "/tmp/nginx-gw.conf.template:/etc/nginx/nginx-gw.conf.template:ro"
 
         environment:
+            NGX_SELF_PRIVATE_IP: ${NGX_SELF_PRIVATE_IP}
             NGX_ORG3_PEER0_IP: ${NGX_ORG3_PEER0_IP}
             NGX_ORG3_PEER1_IP: ${NGX_ORG3_PEER1_IP}
             NGX_ORDERER_GW_IP: ${NGX_ORDERER_GW_IP}

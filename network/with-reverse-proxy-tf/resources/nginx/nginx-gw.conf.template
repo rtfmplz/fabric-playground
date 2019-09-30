@@ -87,6 +87,11 @@ http {
 	server {
 		listen 57999;
 
+		location /ip {
+			access_log off;
+			default_type text/plain;
+			return 200 "${NGX_SELF_PRIVATE_IP}";
+		}
 
 		location /health {
 			access_log off;

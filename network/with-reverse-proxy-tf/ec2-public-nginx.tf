@@ -25,6 +25,7 @@ resource "aws_instance" "gateway0"{
 
 	provisioner "remote-exec" {
 	 	inline = [
+			"echo NGX_SELF_PRIVATE_IP=${self.private_ip} >> /tmp/.env" ,
 	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
 	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
 	 		"echo NGX_ORDERER_GW_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
@@ -73,6 +74,7 @@ resource "aws_instance" "gateway1"{
 
 	provisioner "remote-exec" {
 	 	inline = [
+			"echo NGX_SELF_PRIVATE_IP=${self.private_ip} >> /tmp/.env" ,
 	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
 	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
 	 		"echo NGX_ORDERER_GW_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
