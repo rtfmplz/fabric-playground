@@ -43,9 +43,17 @@ resource "aws_security_group" "private-sg" {
   # outbound
   ##################################################
   egress {
-    description = "Download docker image through NAT gateway"
+    description = "Download docker image through internet gateway"
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Download docker-compose through https"
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
