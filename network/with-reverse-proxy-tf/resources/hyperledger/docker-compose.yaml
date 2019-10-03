@@ -13,6 +13,6 @@ services:
     ports:
       - "7051:7051"
     volumes:
-      - /tmp/cryptos/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp:/tmp/hyperledger/fabric/msp
-      - /tmp/cryptos/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls:/tmp/hyperledger/fabric/tls
+      - /tmp/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp:/tmp/hyperledger/fabric/msp
+      - /tmp/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls:/tmp/hyperledger/fabric/tls
     
