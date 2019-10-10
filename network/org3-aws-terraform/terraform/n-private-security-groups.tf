@@ -43,6 +43,15 @@ resource "aws_security_group" "private-sg" {
   # outbound
   ##################################################
   egress {
+    description = "manager scp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    # cidr_blocks = "${var.private_subnets}"
+  }
+
+  egress {
     description = "Download docker image through internet gateway"
     from_port   = 80
     to_port     = 80

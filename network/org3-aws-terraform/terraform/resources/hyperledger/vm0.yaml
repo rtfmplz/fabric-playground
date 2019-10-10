@@ -7,6 +7,7 @@ networks:
 
 services:
 
+  #[FIXME] panic: Failed to create chaincode server: listen tcp 192.168.2.252:7052: bind: cannot assign requested address 
   peer0:
     extends:
       file: peer.yaml
@@ -25,12 +26,10 @@ services:
     networks:
       - default
 
-  cli:
+  fabric-ca:
     extends:
-      file: cli.yaml
-      service: cli
-    container_name: cli
-    depends_on:
-      - peer0
+      file: fabric-ca.yaml
+      service: fabric-ca
+    container_name: fabric-ca
     networks:
       - default

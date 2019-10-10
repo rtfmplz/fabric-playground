@@ -25,10 +25,3 @@ services:
     networks:
       - default
 
-  fabric-ca:
-    extends:
-      file: fabric-ca.yaml
-      service: fabric-ca
-    container_name: fabric-ca
-    networks:
-      - default
