@@ -26,10 +26,10 @@ resource "aws_instance" "gateway0"{
 	provisioner "remote-exec" {
 	 	inline = [
 			"echo NGX_SELF_PRIVATE_IP=${self.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORDERER_GW_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORG1_GW_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORDERER_GW_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG1_GW_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
 			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
 			"sudo chmod +x /usr/local/bin/docker-compose",
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
@@ -75,10 +75,10 @@ resource "aws_instance" "gateway1"{
 	provisioner "remote-exec" {
 	 	inline = [
 			"echo NGX_SELF_PRIVATE_IP=${self.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORDERER_GW_IP=${aws_instance.fabric0.private_ip} >> /tmp/.env" ,
-	 		"echo NGX_ORG1_GW_IP=${aws_instance.fabric1.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER0_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG3_PEER1_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORDERER_GW_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
+	 		"echo NGX_ORG1_GW_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
 			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
 			"sudo chmod +x /usr/local/bin/docker-compose",
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",

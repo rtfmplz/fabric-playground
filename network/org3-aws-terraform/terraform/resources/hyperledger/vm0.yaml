@@ -1,0 +1,36 @@
+version: "2"
+
+networks:
+  default:
+    external:
+      name: ${DOCKER_NETWORK}
+
+services:
+
+  peer0:
+    extends:
+      file: peer.yaml
+      service: peer0
+    container_name: peer0.${ORG_DOMAIN}
+    depends_on:
+      - couchdb
+    networks:
+      - default
+  
+  couchdb:
+    extends:
+      file: couchdb.yaml
+      service: couchdb
+    container_name: couchdb
+    networks:
+      - default
+
+  cli:
+    extends:
+      file: cli.yaml
+      service: cli
+    container_name: cli
+    depends_on:
+      - peer0
+    networks:
+      - default

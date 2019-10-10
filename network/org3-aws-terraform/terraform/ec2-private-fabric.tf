@@ -1,7 +1,11 @@
+locals {
+    docker_network="hyperledger"
+}
+
 ##################################################
 # EC2 for private subnet 1
 ##################################################
-resource "aws_instance" "fabric0"{
+resource "aws_instance" "vm0"{
 	ami = "${lookup(var.ecs_ami, var.region)}"
 	instance_type = "t2.micro"
 	key_name = "${aws_key_pair.ec2_key_pair.key_name}"
@@ -25,11 +29,17 @@ resource "aws_instance" "fabric0"{
 
 	provisioner "remote-exec" {
 		inline = [
-	 		"echo ${self.private_ip} > /tmp/.env" ,
+	 		"echo ORG1_GW_IP=${self.private_ip} >> /tmp/.env" ,
+	 		"echo VM0_PRIV_IP=${self.private_ip} >> /tmp/.env" ,
+	 		"echo VM1_PRIV_IP=${self.private_ip} >> /tmp/.env" ,
+			#[FIXME] Cycle.....
+	 		# "echo VM1_PRIV_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
 			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
 			"sudo chmod +x /usr/local/bin/docker-compose",
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
-	 		"docker-compose -f /tmp/docker-compose.yaml up -d",
+            "docker network create ${local.docker_network}",
+            "echo DOCKER_NETWORK=${local.docker_network} >> /tmp/.env",
+	 		"pushd /tmp ; docker-compose -f /tmp/vm0.yaml up -d ; popd",
 	 	]
 		
 	 	connection {
@@ -45,7 +55,7 @@ resource "aws_instance" "fabric0"{
 # EC2 for private subnet 2
 ##################################################
 
-resource "aws_instance" "fabric1"{
+resource "aws_instance" "vm1"{
 	ami = "${lookup(var.ecs_ami, var.region)}"
 	instance_type = "t2.micro"
 	key_name = "${aws_key_pair.ec2_key_pair.key_name}"
@@ -69,11 +79,17 @@ resource "aws_instance" "fabric1"{
 
 	provisioner "remote-exec" {
 	 	inline = [
-	 		"echo ${self.private_ip} > /tmp/.env" ,
+	 		"echo ORG1_GW_IP=${self.private_ip} >> /tmp/.env" ,
+			#[FIXME] Cycle.....
+	 		# "echo VM0_PRIV_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
+	 		"echo VM0_PRIV_IP=${self.private_ip} >> /tmp/.env" ,
+	 		"echo VM1_PRIV_IP=${self.private_ip} >> /tmp/.env" ,
 			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
 			"sudo chmod +x /usr/local/bin/docker-compose",
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
-	 		"docker-compose -f /tmp/docker-compose.yaml up -d",
+            "docker network create ${local.docker_network}",
+            "echo DOCKER_NETWORK=${local.docker_network} >> /tmp/.env",
+	 		"pushd /tmp ; docker-compose -f /tmp/vm1.yaml up -d ; popd",
 	 	]
 		
 	 	connection {

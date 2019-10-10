@@ -27,9 +27,6 @@ cd resources/hyperledger-fabric
 cryptogen generate --config=crypto.yaml --output=crypto
 ```
 
-
-
-
 ## plan, apply and destroy
 
 ```bash
