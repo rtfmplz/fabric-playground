@@ -20,6 +20,10 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "docker_network" {
+  description = "docker network name in ec2"
+}
+
 variable "ec2_key_path" {
   type = "map"
   default = {
@@ -27,7 +31,6 @@ variable "ec2_key_path" {
     private   = "~/.ssh/id_rsa"
   }
 }
-
 
 variable "resources_path" {
   type = "map"

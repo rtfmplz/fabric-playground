@@ -17,14 +17,14 @@ resource "aws_lb_target_group" "public-lb-target-group-57999" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "attach-gateway0-57999" {
+resource "aws_lb_target_group_attachment" "attach-gw0-57999" {
   target_group_arn = "${aws_lb_target_group.public-lb-target-group-57999.arn}"
   port = 57999
-  target_id = "${aws_instance.gateway0.id}"
+  target_id = "${aws_instance.gw0.id}"
 }
 
-resource "aws_lb_target_group_attachment" "attach-gateway1-57999" {
+resource "aws_lb_target_group_attachment" "attach-gw1-57999" {
   target_group_arn = "${aws_lb_target_group.public-lb-target-group-57999.arn}"
   port = 57999
-  target_id = "${aws_instance.gateway1.id}"
+  target_id = "${aws_instance.gw1.id}"
 }
