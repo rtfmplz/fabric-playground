@@ -39,18 +39,17 @@ resource "aws_security_group" "private-sg" {
     cidr_blocks = "${var.public_subnets}"
   }
 
+  ingress {
+    description = "for couchdb"
+    from_port   = 5984
+    to_port     = 5984
+    protocol    = "tcp"
+    cidr_blocks = "${var.public_subnets}"
+  }
+
   ##################################################
   # outbound
   ##################################################
-  egress {
-    description = "manager scp"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    # cidr_blocks = "${var.private_subnets}"
-  }
-
   egress {
     description = "Download docker image through internet gateway"
     from_port   = 80

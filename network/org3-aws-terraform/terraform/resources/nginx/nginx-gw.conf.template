@@ -18,7 +18,9 @@ stream {
 
 	access_log /var/log/nginx/access.log stream_routing;
 
+	#####################################
 	# outbound
+	#####################################
 	
 	# TCP proxy (TLS Passthrough)
 	server {
@@ -48,7 +50,9 @@ stream {
 	#	server ${NGX_ORG1_GW_IP}:57051;
 	# }
 
+	#####################################
 	# inbound
+	#####################################
 
 	# TCP Proxy (TLS Passthrough)
 	server {
@@ -104,11 +108,14 @@ http {
 			stub_status;
 		}
 
+		location /couchdb {
+			access_log off;
+			proxy_pass http://${NGX_ORG3_PEER0_IP}:5984/_utils/;
+		}
+
 		location / {
 			return 444;
 		}
 	}
-
-
 }
 
