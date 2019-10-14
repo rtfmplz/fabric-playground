@@ -44,7 +44,7 @@ resource "aws_security_group" "private-sg" {
     from_port   = 5984
     to_port     = 5984
     protocol    = "tcp"
-    cidr_blocks = "${var.public_subnets}"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ##################################################

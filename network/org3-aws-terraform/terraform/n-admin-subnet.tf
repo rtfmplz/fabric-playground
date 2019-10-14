@@ -4,7 +4,7 @@
 resource "aws_subnet" "admin-subnet" {
   cidr_block        = "${var.admin_subnets}"
   vpc_id            = "${aws_vpc.vpc.id}"
-  # availability_zone = "${var.availability_zones[count.index]}"
+  availability_zone = "${var.availability_zones[0]}"
 
   tags = {
     Name = "admin-subnet"

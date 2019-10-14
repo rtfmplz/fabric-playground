@@ -108,9 +108,10 @@ http {
 			stub_status;
 		}
 
-		location /couchdb {
+		# @see https://ohgyun.com/621
+		location ^~ /couchdb {
 			access_log off;
-			proxy_pass http://${NGX_ORG3_PEER0_IP}:5984/_utils/;
+			proxy_pass http://${NGX_ORG3_PEER0_IP}:5984/;
 		}
 
 		location / {
