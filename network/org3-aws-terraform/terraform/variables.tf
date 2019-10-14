@@ -56,6 +56,10 @@ variable "availability_zones" {
   type = "list"
 }
 
+variable "admin_subnets" {
+  type = "string"
+}
+
 variable "private_subnets" {
   type = "list"
 }

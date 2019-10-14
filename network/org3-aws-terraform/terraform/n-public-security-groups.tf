@@ -85,7 +85,7 @@ resource "aws_security_group" "public-sg" {
   }
 
   egress {
-    description = "for peer in other organization"
+    description = "for orderer in other organization"
     from_port   = 7050
     to_port     = 7050
     protocol    = "tcp"
@@ -93,7 +93,7 @@ resource "aws_security_group" "public-sg" {
   }
 
   egress {
-    description = "for orderer in other organization"
+    description = "for peer in other organization"
     from_port   = 7051
     to_port     = 7051
     protocol    = "tcp"
