@@ -36,7 +36,7 @@ resource "aws_security_group" "private-sg" {
     from_port   = 7051
     to_port     = 7051
     protocol    = "tcp"
-    cidr_blocks = "${var.public_subnets}"
+    cidr_blocks = "${concat("${var.public_subnets}", list("${var.admin_subnets}"))}"
   }
 
   ingress {
