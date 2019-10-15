@@ -12,6 +12,10 @@
 
 ## Consist of
 
+### [`aws`](https://github.com/rtfmplz/fabric-playground/tree/master/aws)
+
+* terraform을 이용해서 aws에 fabric network를 구성한다.
+
 ### [`network`](https://github.com/rtfmplz/fabric-playground/tree/master/network)
 
 * 다양한 구성의 Fabric Network를 Docker Compose 를 이용해서 구성할 수 있다.
