@@ -18,6 +18,8 @@ PRODUCTION_DIR="./production"
 DOCKER_NETWORK="fabric-minimal"
 INTERVAL=1
 
+export FABRIC_CFG_PATH=${PWD}
+
 ##############################################################
 # Create crypto materials
 ##############################################################
