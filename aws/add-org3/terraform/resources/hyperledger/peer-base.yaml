@@ -30,13 +30,13 @@ services:
     ports:
       - "7051:7051"
     extra_hosts:
-      - orderer0.ordererorg.com:${ORG1_GW_IP}
-      #- orderer1.ordererorg.com:${ORG1_GW_IP}
-      #- orderer2.ordererorg.com:${ORG1_GW_IP}
-      - peer0.org1:${ORG1_GW_IP}
-      #- peer1.org1:${ORG1_GW_IP}
-      #- peer0.org2:${ORG2_GW_IP}
-      #- peer1.org2:${ORG2_GW_IP}
+      - ${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}:${GW1_PRIV_IP}
+      #- orderer1.${ORDERER_ORG_DOMAIN}:${GW0_PRIV_IP}
+      #- orderer2.${ORDERER_ORG_DOMAIN}:${GW0_PRIV_IP}
+      - peer0.${HOST_ORG_DOMAIN}:${GW0_PRIV_IP}
+      - peer1.${HOST_ORG_DOMAIN}:${GW1_PRIV_IP}
+      #- peer0.org2:${GW0_PRIV_IP}
+      #- peer1.org2:${GW1_PRIV_IP}
       - peer0.${ORG_DOMAIN}:${VM0_PRIV_IP}
       - peer1.${ORG_DOMAIN}:${VM1_PRIV_IP}
 

@@ -38,16 +38,16 @@ stream {
 
 	# upstreams by TLS SNI
 	map $ssl_preread_server_name $selected_outbound_stream {
-		~*orderer[0-9].ordererorg upstream_orderer_gw;
-		~*peer[0-9].org1 upstream_org1_gw;
+		~*orderer[0-9].${NGX_ORDERER_ORG_DOMAIN} upstream_orderer_org_gw;
+		~*peer[0-9].${NGX_HOST_ORG_DOMAIN} upstream_host_org_gw;
 	}
 
-	# upstream upstream_orderer_gw {
-	#	server ${NGX_ORDERER_GW_IP}:57050;
+	# upstream upstream_orderer_org_gw {
+	#	server ${NGX_ORDERER_ORG_GW_IP}:57050;
 	# }
 
-	# upstream upstream_org1_gw {
-	#	server ${NGX_ORG1_GW_IP}:57051;
+	# upstream upstream_host_org_gw {
+	#	server ${NGX_HOST_ORG_GW_IP}:57051;
 	# }
 
 	#####################################
@@ -71,7 +71,7 @@ stream {
 	}
 
 	map $ssl_preread_server_name $selected_inbound_stream {
-		~*peer(?<no>[0-9]) upstream_org3_peer$no;
+		~*peer(?<no>[0-9]).${NGX_ORG3_DOMAIN} upstream_org3_peer$no;
 	}
 
 	upstream upstream_org3_peer0 {
