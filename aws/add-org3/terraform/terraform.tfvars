@@ -2,7 +2,7 @@ region = "ap-northeast-2"
 
 docker_network = "hyperledger"
 
-vpc_name = "test_vpc"
+vpc_name = "org3_vpc"
 
 vpc_cidr = "192.168.0.0/16"
 
