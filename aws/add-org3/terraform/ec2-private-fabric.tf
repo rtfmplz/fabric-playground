@@ -81,7 +81,7 @@ resource "null_resource" "vm1-provisioner" {
 		"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
 		"docker network create ${var.docker_network}",
 		"echo DOCKER_NETWORK=${var.docker_network} >> /tmp/.env",
-	 	"pushd /tmp ; docker-compose -f /tmp/vm0.yaml up -d ; popd",
+	 	"pushd /tmp ; docker-compose -f /tmp/vm1.yaml up -d ; popd",
     	] 
 	}
 }
