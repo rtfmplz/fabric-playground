@@ -31,10 +31,11 @@ services:
       - ORDERER_ORG_TLSCACERTS=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/ordererorg/msp/tlscacerts/tlsca.ordererorg-cert.pem
     volumes:
       - /var/run/:/host/var/run/
-      - /tmp/chaincode_example02/:/opt/gopath/src/github.com/chaincode/chaincode_example02
-      - /tmp/crypto:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-      - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/msp:/tmp/hyperledger/fabric/msp
-      - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls:/tmp/hyperledger/fabric/tls
+      - ./chaincode_example02/:/opt/gopath/src/github.com/chaincode/chaincode_example02
+      # - /tmp/crypto:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      # - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/msp:/tmp/hyperledger/fabric/msp
+      # - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls:/tmp/hyperledger/fabric/tls
+      - ./:/opt/gopath/src/github.com/hyperledger/fabric/peer/
     extra_hosts:
       - peer0.${ORG_DOMAIN}:${VM0_PRIV_IP}
       - peer1.${ORG_DOMAIN}:${VM1_PRIV_IP}
