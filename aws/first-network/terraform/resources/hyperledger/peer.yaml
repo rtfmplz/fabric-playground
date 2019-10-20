@@ -1,0 +1,69 @@
+version: '2'
+
+services:
+
+  peer0:
+    image: hyperledger/fabric-peer:1.4.1
+    container_name: peer0.${ORG_DOMAIN}
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.${ORG_DOMAIN}
+      - CORE_PEER_ADDRESS=peer0.${ORG_DOMAIN}:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.${ORG_DOMAIN}:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.${ORG_DOMAIN}:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.${ORG_DOMAIN}:7051
+      - CORE_PEER_LOCALMSPID=${ORG_NAME}MSP
+      
+      # World State
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      
+      # METRICS
+      #- CORE_OPERATIONS_LISTENADDRESS=peer0.${ORG_DOMAIN}:9443
+    volumes:
+      - ./crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/msp:/etc/hyperledger/fabric/msp
+      - ./crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls:/etc/hyperledger/fabric/tls
+      #- production/peer1:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer1:
+    image: hyperledger/fabric-peer:1.4.1
+    container_name: peer1.${ORG_DOMAIN}
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.${ORG_DOMAIN}
+      - CORE_PEER_ADDRESS=peer1.${ORG_DOMAIN}:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.${ORG_DOMAIN}:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.${ORG_DOMAIN}:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.${ORG_DOMAIN}:7051
+      - CORE_PEER_LOCALMSPID=${ORG_NAME}MSP
+
+      # World State
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb:5984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=
+      
+      # METRICS
+      #- CORE_OPERATIONS_LISTENADDRESS=peer1.${ORG_DOMAIN}:9443
+    volumes:
+      - ./crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer1.${ORG_DOMAIN}/msp:/etc/hyperledger/fabric/msp
+      - ./crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer1.${ORG_DOMAIN}/tls:/etc/hyperledger/fabric/tls
+      #- production/peer1:/var/hyperledger/production
+    ports:
+      - 7051:7051

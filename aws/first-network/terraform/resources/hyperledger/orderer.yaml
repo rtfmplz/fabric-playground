@@ -1,0 +1,52 @@
+version: '2'
+
+services:
+
+  orderer:
+    image: hyperledger/fabric-orderer:1.4.1
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=${ORDERER_ORG_NAME}MSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+
+      - ORDERER_HOST=${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}
+      - CONFIGTX_ORDERER_ORDERERTYPE=kafka
+      - CONFIGTX_ORDERER_KAFKA_BROKERS=[kafka:9092]
+      - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
+      - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
+      - ORDERER_KAFKA_VERBOSE=true
+
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}:9443
+      - ORDERER_OPERATIONS_TLS_ENABLED=true
+      - ORDERER_OPERATIONS_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_OPERATIONS_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_OPERATIONS_TLS_CLIENTAUTHREQUIRED=true
+      - ORDERER_OPERATIONS_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    volumes:
+      - ./genesis.block:/var/hyperledger/orderer/genesis.block
+      - ./crypto/ordererOrganizations/${ORDERER_ORG_DOMAIN}/orderers/${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}/msp:/var/hyperledger/orderer/msp
+      - ./crypto/ordererOrganizations/${ORDERER_ORG_DOMAIN}/orderers/${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}/tls:/var/hyperledger/orderer/tls
+      - ./production/orderer:/var/hyperledger/production/
+    ports:
+      - 7050:7050
+    extra_hosts:
+      # - ${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}:${VM1_PRIV_IP}
+      #- orderer1.${ORDERER_ORG_DOMAIN}:${ORG1_GW_IP}
+      #- orderer2.${ORDERER_ORG_DOMAIN}:${ORG1_GW_IP}
+      # - peer0.${HOST_ORG_DOMAIN}:${ORG1_GW_IP}
+      # - peer1.${HOST_ORG_DOMAIN}:${ORG1_GW_IP}
+      #- peer0.org2:${ORG2_GW_IP}
+      #- peer1.org2:${ORG2_GW_IP}
+      - peer0.${ORG_DOMAIN}:${VM0_PRIV_IP}
+      - peer1.${ORG_DOMAIN}:${VM1_PRIV_IP}

@@ -1,0 +1,52 @@
+version: "2"
+
+networks:
+  default:
+    external:
+      name: ${DOCKER_NETWORK}
+
+services:
+
+  peer1:
+    extends:
+      file: peer.yaml
+      service: peer1
+    container_name: peer1.${ORG_DOMAIN}
+    depends_on:
+      - couchdb
+    networks:
+      - default
+  
+  couchdb:
+    extends:
+      file: couchdb.yaml
+      service: couchdb
+    container_name: couchdb
+    networks:
+      - default
+
+  orderer:
+    extends:
+      file: orderer.yaml
+      service: orderer
+    container_name: orderer0.${ORDERER_ORG_DOMAIN}
+    networks:
+      - default
+
+  kafka:
+    extends:
+      file: kafka.yaml
+      service: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    networks:
+      - default
+
+  zookeeper:
+    extends:
+      file: zookeeper.yaml
+      service: zookeeper
+    container_name: zookeeper
+    networks:
+      - default

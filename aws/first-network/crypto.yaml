@@ -1,0 +1,29 @@
+# OrdererOrgs Info
+OrdererOrgs:
+    - Name: OrdererOrg #OrdererOrg 이름의 Org MSP 생성
+      Domain: ordererorg
+      Specs:
+        - Hostname: orderer0 #orderer1 orderer 노드 MSP 생성
+
+
+# PeerOrgs Info
+# Count 필드의 숫자만큼 Peer 또는 User를 생성
+# Start 필드를 사용하지 않으면 Template은 0부터, User는 1부터 생성
+# 따라서 여기서는 peer1, peer2, User1이 생성
+PeerOrgs:
+    - Name: Org1 #Org1 이름의 Org MSP 생성
+      Domain: org1.example.com
+        # https://hyperledger-fabric.readthedocs.io/en/release-1.4/msp.html#identity-classification
+        #EnableNodeOUs: true
+      Template: #peer1, peer2 MSP 생성
+          Count: 2
+          # Start: 1
+      Users: #User1 클라이언트의 MSP 생성
+          Count: 1
+  # - Name: Org2
+  #   Domain: org2
+  #   EnableNodeOUs: true
+  #   Template:
+  #     Count: 2
+  #   Users:
+  #     Count: 1 

@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+
+    org1_gw:
+        image: nginx:latest
+        container_name: ${ORG_NAME}_GW
+        restart: always
+        ports:
+            #- "57050:57050"
+            - "57051:57051"
+            - "57999:57999"
+            - "7050:7050"
+            - "7051:7051"
+
+        volumes:
+            - "/tmp/nginx-gw.conf.template:/etc/nginx/nginx-gw.conf.template:ro"
+
+        environment:
+            # command에서 envsubst를 사용해서 nginx.conf를 만들어 내는데 사용된다.
+            NGX_SELF_PRIVATE_IP: ${SELF_PRIVATE_IP}
+
+            # OUT-BOUND
+            NGX_ORG3_DOMAIN: ${ORG3_DOMAIN}
+            NGX_ORG3_NLB_IP: ${ORG3_NLB_IP}
+
+            # IN-BOUND
+            NGX_ORDERER_ORG_HOSTNAME: ${ORDERER_ORG_HOSTNAME}
+            NGX_ORDERER_ORG_DOMAIN: ${ORDERER_ORG_DOMAIN}
+            NGX_HOST_ORG_DOMAIN: ${HOST_ORG_DOMAIN}
+            NGX_ORDERER0_IP: ${VM0_PRIV_IP}
+            NGX_ORG1_PEER0_IP: ${VM0_PRIV_IP}
+            NGX_ORG1_PEER1_IP: ${VM1_PRIV_IP}
+
+
+        command: /bin/bash -c "envsubst \"`env | grep NGX_ | awk -F = '{ printf \" $$%s\", $$1}'`\" < /etc/nginx/nginx-gw.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
