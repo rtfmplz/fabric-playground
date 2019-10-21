@@ -77,8 +77,8 @@ sleep ${INTERVAL}
 ##############################################################
 # Create genesis.block
 ##############################################################
-if [ -e ./${FABRIC_RESOURCES_DIR}/${GENESIS_BLOCK} ]; then
-  rm -rf ./${FABRIC_RESOURCES_DIR}/${GENESIS_BLOCK}
+if [ -e ${FABRIC_RESOURCES_DIR}/${GENESIS_BLOCK} ]; then
+  rm -rf ${FABRIC_RESOURCES_DIR}/${GENESIS_BLOCK}
 fi
 configtxgen -profile OrgsOrdererGenesis -outputBlock ${FABRIC_RESOURCES_DIR}/${GENESIS_BLOCK}
 sleep ${INTERVAL}
@@ -86,8 +86,8 @@ sleep ${INTERVAL}
 ##############################################################
 # Create channel configuration
 ##############################################################
-if [ -e ./${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
-  rm -rf ./${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX}
+if [ -e ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
+  rm -rf ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX}
 fi
 configtxgen -profile OrgsChannel -outputCreateChannelTx ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${CHANNEL_NAME}
 sleep ${INTERVAL}
@@ -95,8 +95,8 @@ sleep ${INTERVAL}
 ##############################################################
 # Create org1 anchor peer update configuration
 ##############################################################
-if [ -e ./${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
-  rm -rf ./${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
+if [ -e ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
+  rm -rf ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
 fi
 configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${CHANNEL_NAME} -asOrg ${ORG_NAME}
 sleep ${INTERVAL}

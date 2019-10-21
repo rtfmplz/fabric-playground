@@ -37,7 +37,7 @@ services:
       - ./genesis.block:/var/hyperledger/orderer/genesis.block
       - ./crypto/ordererOrganizations/${ORDERER_ORG_DOMAIN}/orderers/${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}/msp:/var/hyperledger/orderer/msp
       - ./crypto/ordererOrganizations/${ORDERER_ORG_DOMAIN}/orderers/${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}/tls:/var/hyperledger/orderer/tls
-      - ./production/orderer:/var/hyperledger/production/
+      #- ./production/orderer:/var/hyperledger/production/
     ports:
       - 7050:7050
     extra_hosts:
