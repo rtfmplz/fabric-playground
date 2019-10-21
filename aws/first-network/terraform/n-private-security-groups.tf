@@ -40,6 +40,14 @@ resource "aws_security_group" "private-sg" {
   }
 
   ingress {
+    description = "from other orgs to orderer"
+    from_port   = 7050
+    to_port     = 7050
+    protocol    = "tcp"
+    cidr_blocks = "${var.public_subnets}"
+  }
+
+  ingress {
     description = "for peer"
     from_port   = 7051
     to_port     = 7051

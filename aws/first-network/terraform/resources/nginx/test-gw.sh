@@ -30,10 +30,18 @@ assert "$GATEWAY_ADDR" "$out"
 # CN(Common Name) 확인 테스트
 ###############################################################
 
-try "-> org3 g/w -> peer0.org3"
-out=$(get_cn "peer0:57051" "$GATEWAY_IP")
-assert "CN=peer0.org3.example.com" "$out"
+try "-> org1 g/w -> peer0.org1.example.com"
+out=$(get_cn "peer0.org1.example.com:57051" "$GATEWAY_IP")
+assert "CN=peer0.org1.example.com" "$out"
+###############################################################
+
+try "-> org3 g/w -> orderer0.ordererorg"
+out=$(get_cn "orderer0.ordererorg:57050" "$GATEWAY_IP")
+assert "CN=orderer0.ordererorg:57050" "$out"
 ###############################################################
 
 echo
 echo "PASS: $tests_run tests run"
+
+# curl --resolve peer0.org1.example.com:57051:${LB_IP} https://peer0.org1.example.com:57051 -k -s -v --stderr - | grep -a "CN=$CN"
+# curl --resolve orderer0.ordererorg:57050:${LB_IP} https://orderer0.ordererorg:57050 -k -s -v --stderr - | grep -a "CN=$CN"

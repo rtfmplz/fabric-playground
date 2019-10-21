@@ -34,6 +34,14 @@ resource "aws_security_group" "public-sg" {
   }
 
   ingress {
+    description = "from other orgs to orderer"
+    from_port   = 57050
+    to_port     = 57050
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "health check for gateway"
     from_port   = 57999
     to_port     = 57999

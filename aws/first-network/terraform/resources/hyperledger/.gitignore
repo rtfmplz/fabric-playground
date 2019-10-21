@@ -1,3 +1,4 @@
 *.tx
 *.block
 crypto/
+.env

@@ -7,7 +7,7 @@ services:
         container_name: ${ORG_NAME}_GW
         restart: always
         ports:
-            #- "57050:57050"
+            - "57050:57050"
             - "57051:57051"
             - "57999:57999"
             - "7050:7050"
@@ -28,7 +28,7 @@ services:
             NGX_ORDERER_ORG_HOSTNAME: ${ORDERER_ORG_HOSTNAME}
             NGX_ORDERER_ORG_DOMAIN: ${ORDERER_ORG_DOMAIN}
             NGX_HOST_ORG_DOMAIN: ${HOST_ORG_DOMAIN}
-            NGX_ORDERER0_IP: ${VM0_PRIV_IP}
+            NGX_ORDERER0_IP: ${VM1_PRIV_IP}
             NGX_ORG1_PEER0_IP: ${VM0_PRIV_IP}
             NGX_ORG1_PEER1_IP: ${VM1_PRIV_IP}
 

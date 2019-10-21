@@ -37,3 +37,14 @@ resource "aws_lb_listener" "public-lb-listener-57051" {
     target_group_arn = "${aws_lb_target_group.public-lb-target-group-57051.arn}"
   }
 }
+
+resource "aws_lb_listener" "public-lb-listener-57050" {
+  load_balancer_arn = "${aws_lb.public-load-balancer.arn}"
+  port              = "57050"
+  protocol          = "TCP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.public-lb-target-group-57050.arn}"
+  }
+}
