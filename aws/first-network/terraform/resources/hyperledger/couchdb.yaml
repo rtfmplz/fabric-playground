@@ -3,7 +3,7 @@ version: "2"
 services:
 
   couchdb:
-    image: hyperledger/fabric-couchdb:0.4.15
+    image: hyperledger/fabric-couchdb:latest
     container_name: couchdb
     hostname: couchdb
     restart: always

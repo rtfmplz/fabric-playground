@@ -3,7 +3,7 @@ version: "2"
 services:
 
   zookeeper:
-    image: hyperledger/fabric-zookeeper:0.4.15
+    image: hyperledger/fabric-zookeeper:latest
     environment:
       - TZ=Asia/Seoul
       - ZOO_MY_ID=1

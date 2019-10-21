@@ -3,7 +3,7 @@ version: "2"
 services:
 
   cli:
-    image: hyperledger/fabric-tools:1.4.1
+    image: hyperledger/fabric-tools:latest
     container_name: cli
     hostname: cli
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer

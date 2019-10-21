@@ -3,7 +3,7 @@ version: '2'
 services:
 
   peer-base:
-    image: hyperledger/fabric-peer:1.4.1
+    image: hyperledger/fabric-peer:latest
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     environment:

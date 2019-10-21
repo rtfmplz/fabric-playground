@@ -7,7 +7,6 @@ networks:
 
 services:
 
-  #[FIXME] panic: Failed to create chaincode server: listen tcp 192.168.2.252:7052: bind: cannot assign requested address 
   peer0:
     extends:
       file: peer.yaml

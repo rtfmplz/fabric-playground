@@ -3,7 +3,7 @@ version: "2"
 services:
 
   kafka:
-    image: hyperledger/fabric-kafka:0.4.15
+    image: hyperledger/fabric-kafka:latest
     environment:
       - TZ=Asia/Seoul
       - KAFKA_ADVERTISED_HOST_NAME=kafka

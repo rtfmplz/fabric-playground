@@ -3,7 +3,7 @@ version: '2'
 services:
 
   orderer:
-    image: hyperledger/fabric-orderer:1.4.1
+    image: hyperledger/fabric-orderer:latest
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     environment:

@@ -3,7 +3,7 @@ version: '2'
 services:
 
   peer0:
-    image: hyperledger/fabric-peer:1.4.1
+    image: hyperledger/fabric-peer:latest
     container_name: peer0.${ORG_DOMAIN}
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
@@ -36,7 +36,7 @@ services:
       - 7051:7051
 
   peer1:
-    image: hyperledger/fabric-peer:1.4.1
+    image: hyperledger/fabric-peer:latest
     container_name: peer1.${ORG_DOMAIN}
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
