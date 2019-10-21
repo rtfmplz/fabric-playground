@@ -32,7 +32,7 @@ resource "aws_security_group" "private-sg" {
   }
   
   ingress {
-    description = "from peer & cli to orderer"
+    description = "from peer and cli to orderer"
     from_port   = 7050
     to_port     = 7050
     protocol    = "tcp"
