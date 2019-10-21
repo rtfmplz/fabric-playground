@@ -32,11 +32,11 @@ resource "aws_security_group" "private-sg" {
   }
   
   ingress {
-    description = "for orderer"
+    description = "from peer & cli to orderer"
     from_port   = 7050
     to_port     = 7050
     protocol    = "tcp"
-    cidr_blocks = "${list("${var.admin_subnets}")}"
+    cidr_blocks = "${concat("${var.private_subnets}", list("${var.admin_subnets}"))}"
   }
 
   ingress {
@@ -45,6 +45,14 @@ resource "aws_security_group" "private-sg" {
     to_port     = 7051
     protocol    = "tcp"
     cidr_blocks = "${concat("${var.public_subnets}", list("${var.admin_subnets}"))}"
+  }
+
+  ingress {
+    description = "local gossip"
+    from_port   = 7051
+    to_port     = 7051
+    protocol    = "tcp"
+    cidr_blocks = "${var.private_subnets}"
   }
 
   ingress {
