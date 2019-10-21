@@ -101,6 +101,22 @@ resource "aws_security_group" "public-sg" {
   }
 
   egress {
+    description = "for orderer in other organization"
+    from_port   = 57050
+    to_port     = 57050
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "for peer in other organization"
+    from_port   = 57051
+    to_port     = 57051
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
     description = "for peer in other organization"
     from_port   = 5984
     to_port     = 5984

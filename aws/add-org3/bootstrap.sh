@@ -15,7 +15,7 @@ DOCKER_NETWORK="hyperledger"
 
 ORDERER_ORG_HOSTNAME="orderer0"
 ORDERER_ORG_DOMAIN="ordererorg"
-HOST_ORG_DOMAIN="org1"
+HOST_ORG_DOMAIN="org1.example.com"
 
 
 HOST_ORG_GW_IP="127.0.0.1"

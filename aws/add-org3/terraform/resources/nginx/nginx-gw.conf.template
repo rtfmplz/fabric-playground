@@ -24,7 +24,7 @@ stream {
 	
 	# TCP proxy (TLS Passthrough)
 	server {
-		listen 7051 reuseport so_keepalive=90s::10;
+		listen 7050-7051 reuseport so_keepalive=90s::10;
 		
 		# TLS SNI
 		ssl_preread on;
@@ -42,13 +42,13 @@ stream {
 		~*peer[0-9].${NGX_HOST_ORG_DOMAIN} upstream_host_org_gw;
 	}
 
-	# upstream upstream_orderer_org_gw {
-	#	server ${NGX_ORDERER_ORG_GW_IP}:57050;
-	# }
+	upstream upstream_orderer_org_gw {
+		server ${NGX_ORDERER_ORG_GW_IP}:57050;
+	}
 
-	# upstream upstream_host_org_gw {
-	#	server ${NGX_HOST_ORG_GW_IP}:57051;
-	# }
+	upstream upstream_host_org_gw {
+		server ${NGX_HOST_ORG_GW_IP}:57051;
+	}
 
 	#####################################
 	# inbound
