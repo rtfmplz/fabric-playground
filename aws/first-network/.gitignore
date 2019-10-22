@@ -1,3 +1,4 @@
 *.tfstate
 artifacts
 crypto
+channel-artifact.json

@@ -28,7 +28,46 @@ cd first-network
 ./bootstrap.sh
 ```
 
+### test chaincode 설치 (추후 script로 만들 예정)
+
+```bash
+export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
+ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
+docker exec -it cli bash
+```
+
+```bash
+docker exec -it cli /bin/bash
+```
+
+```bash
+peer channel create -o orderer0.ordererorg:7050 -c ch1 -f ch1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+```bash
+peer channel join -b ch1.block
+```
+
+```bash
+peer channel update -o orderer0.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+```bash
+peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+
+```bash
+# w/ TLS
+peer chaincode instantiate -o orderer0.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
+```
+
+```bash
+peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
+```
+
 ### output files for first-network
+
+> 해당 파일들은 Extra Org에 전달되어야 한다.
 
 * tlsca.ordererorg-cert.pem
 * public-load-balancer-dns-name.org1
@@ -52,5 +91,43 @@ cd add-org3
 
 ### output files for add-org3
 
+> 해당 파일들은 HOST Org에 전달되어야 한다.
+
 * channel-artifact.json
 * public-load-balaancer-dns-name.org3
+
+## STEP 3. Add Org3 to First-Network
+
+`channel-artifact.json`을 admin instance 의 /tmp 경로에 복사 한 후, cli docker container를 이용해서 add-org script 실행
+
+```bash
+export CHANNEL_NAME="ch1"
+export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
+scp -i ~/.ssh/id_rsa ./channel-artifact.json ec2-user@${ADMIN_EC2_PUBLIC_IP}:/tmp
+ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
+docker exec -it cli bash
+peer channel fetch config config_block.pb -o orderer0.ordererorg:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
+configtxlator proto_decode --input config_block.pb --type common.Block | jq .data.data[0].payload.data.config > config.json
+jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"Org3MSP":.[1]}}}}}' ./config.json ./channel-artifact.json > ./modified_config.json
+configtxlator proto_encode --input ./config.json --type common.Config >original_config.pb
+configtxlator proto_encode --input ./modified_config.json --type common.Config >modified_config.pb
+configtxlator compute_update --channel_id "${CHANNEL_NAME}" --original original_config.pb --updated modified_config.pb >config_update.pb
+configtxlator proto_decode --input config_update.pb --type common.ConfigUpdate >config_update.json
+echo '{"payload":{"header":{"channel_header":{"channel_id":"'$CHANNEL_NAME'", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' | jq . >config_update_in_envelope.json
+configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope >org3_update_in_envelope.pb
+peer channel signconfigtx -f "org3_update_in_envelope.pb"
+peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer0.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+## STEP 4. Join test-channel
+
+channel-join script 실행 후, chaincode install
+
+```bash
+docker exec -it cli bash
+export CHANNEL_NAME="ch1"
+echo "192.168.201.61 orderer0.ordererorg" >> /etc/hosts
+peer channel fetch 0 $CHANNEL_NAME.block -o orderer0.ordererorg:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
+peer channel join -b $CHANNEL_NAME.block
+
+```
