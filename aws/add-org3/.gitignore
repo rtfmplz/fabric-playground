@@ -2,3 +2,4 @@ crypto.yaml
 configtx.yaml
 *.tfstate
 artifacts
+*.pem
