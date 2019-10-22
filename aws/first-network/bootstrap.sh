@@ -3,64 +3,59 @@
 ##############################################################
 # Variables
 ##############################################################
+if [ -z ${TEST_CHANNEL_NAME} ]; then
+  echo "TEST_CHANNEL_NAME is required."
+  exit 1;
+fi
+
+if [ -z "${ORG_NAME}" ]; then
+  echo "ORG_NAME is required."
+  exit 1;
+fi
+
+if [ -z "${ORG_DOMAIN}" ]; then
+  echo "ORG_DOMAIN is required."
+  exit 1;
+fi
+
+if [ -z "${ORDERER_ORG_NAME}" ]; then
+  echo "ORDERER_ORG_NAME is required."
+  exit 1;
+fi
+
+if [ -z "${ORDERER_ORG_DOMAIN}" ]; then
+  echo "ORDERER_ORG_DOMAIN is required."
+  exit 1;
+fi
+
+CHANNEL_CONF_TX="${TEST_CHANNEL_NAME}.tx"
 FABRIC_RESOURCES_DIR="${PWD}/terraform/resources/hyperledger"
 NGINX_RESOURCES_DIR="${PWD}/terraform/resources/nginx"
-
 GENESIS_BLOCK="genesis.block"
-CHANNEL_NAME="ch1"
-CHANNEL_CONF_TX=${CHANNEL_NAME}.tx
 ANCHOR_PEER_UPDATE_TX="updateAnchorOrg1.tx"
-
 CRYPTO_CONFIG_FILE="crypto.yaml"
-ORDERER_TLS_CA_CERT_FILE="tlsca.ordererorg-cert.pem"
 FABRIC_CFG_FILE="configtx.yaml"
 CHANNEL_ARTIFACT="channel-artifact.json"
 INTERVAL=1
 DOCKER_NETWORK="hyperledger"
-
-ORDERER_ORG_NAME="OrdererOrg"
 ORDERER_ORG_HOSTNAME="orderer0"
-ORDERER_ORG_DOMAIN="ordererorg"
-
-
-HOST_ORG_GW_IP="127.0.0.1"
-if [ -z ${HOST_ORG_GW_IP} ]; then
-  echo "HOST_ORG_GW_IP is required."
-  exit 1;
-fi
-
-ORG_NAME="Org1"
-if [ -n "$1" ]; then
-  ORG_NAME=$1
-fi
-
-ORG_DOMAIN="org1.example.com"
-if [ -n "$2" ]; then
-  ORG_DOMAIN=$2
-fi
-
 ORG3_DOMAIN="org3.example.com"
-
 OUTPUT_CRYPTO_DIR="crypto"
-ORDERER_TLS_CA_CERT_DIR="ordererOrganizations/ordererorg/msp/tlscacerts/"
+ORDERER_TLS_CA_CERT_DIR="ordererOrganizations/${ORDERER_ORG_DOMAIN}/msp/tlscacerts/"
+ORDERER_TLS_CA_CERT_FILE="tlsca.${ORDERER_ORG_DOMAIN}-cert.pem"
+
 CA_MSP_DIR="${OUTPUT_CRYPTO_DIR}/peerOrganizations/${ORG_DOMAIN}/ca/"
 
-export FABRIC_CFG_PATH=${PWD}
 
+export FABRIC_CFG_PATH=${PWD}
 
 ##############################################################
 # Check resource files exist
 ##############################################################
 [ -e ./${CRYPTO_CONFIG_FILE} ] && echo "${CRYPTO_CONFIG_FILE}: OK" || { echo "${CRYPTO_CONFIG_FILE} could not found."; exit 1; }
-# [ -e ./${ORDERER_TLS_CA_CERT_FILE} ] && echo "${ORDERER_TLS_CA_CERT_FILE}: OK" || { echo "${ORDERER_TLS_CA_CERT_FILE} could not found."; exit 1; }
 #[ -e ./${FABRIC_RESOURCES_DIR}/.env ] && echo ".env: OK" || { echo ".env  could not found."; exit 1; }
 [ -e ./${FABRIC_CFG_FILE} ] && echo "${FABRIC_CFG_FILE}: OK" || { echo "${FABRIC_CFG_FILE} could not found."; exit 1; }
 
-
-##############################################################
-# Preprocessing
-##############################################################
-echo $FABRIC_CFG_PATH
 
 ##############################################################
 # Create crypto materials
@@ -89,7 +84,7 @@ sleep ${INTERVAL}
 if [ -e ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
   rm -rf ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX}
 fi
-configtxgen -profile OrgsChannel -outputCreateChannelTx ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${CHANNEL_NAME}
+configtxgen -profile OrgsChannel -outputCreateChannelTx ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${TEST_CHANNEL_NAME}
 sleep ${INTERVAL}
 
 ##############################################################
@@ -98,7 +93,7 @@ sleep ${INTERVAL}
 if [ -e ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
   rm -rf ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
 fi
-configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${CHANNEL_NAME} -asOrg ${ORG_NAME}
+configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${TEST_CHANNEL_NAME} -asOrg ${ORG_NAME}
 sleep ${INTERVAL}
 
 
@@ -136,9 +131,13 @@ EOF
 sleep ${INTERVAL}
 
 #############################################################
-# export AWS_ACCESS_KEY
+# Prepare artifacts dir
 ##############################################################
-
+if [ -e ./artifacts ]; then
+  rm -rf ./artifacts
+fi
+mkdir ./artifacts
+cp ./${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}/${ORDERER_TLS_CA_CERT_FILE} ./artifacts
 
 
 #############################################################
@@ -147,4 +146,5 @@ sleep ${INTERVAL}
 pushd terraform
 terraform init
 terraform apply
+echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org1
 popd
