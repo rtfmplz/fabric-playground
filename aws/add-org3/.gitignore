@@ -1,4 +1,4 @@
 crypto.yaml
 configtx.yaml
-channel-artifact.json
 *.tfstate
+artifacts
