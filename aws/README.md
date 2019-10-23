@@ -73,7 +73,6 @@ export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
 scp -i ~/.ssh/id_rsa ./artifacts/channel-artifact.json ec2-user@${ADMIN_EC2_PUBLIC_IP}:/tmp
 ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
 docker exec -it cli bash
-export TEST_CHANNEL_NAME="ch1"
 peer channel fetch config config_block.pb -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
 configtxlator proto_decode --input config_block.pb --type common.Block | jq .data.data[0].payload.data.config > config.json
 jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"Org3MSP":.[1]}}}}}' ./config.json ./channel-artifact.json > ./modified_config.json
@@ -92,14 +91,11 @@ peer channel update -f org3_update_in_envelope.pb -c $TEST_CHANNEL_NAME -o order
 channel-join script 실행 후, chaincode install
 
 ```bash
+export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
+ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
 docker exec -it cli bash
-export TEST_CHANNEL_NAME="ch1"
-echo "${gw0-private_ip} orderer0.ordererorg" >> /etc/hosts
 peer channel fetch 0 $TEST_CHANNEL_NAME.block -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
 peer channel join -b $TEST_CHANNEL_NAME.block
-```
-
-```bash
 peer chaincode install -n ${TEST_CHAINCODE_NAME} -v 1.0 -p github.com/chaincode/chaincode_example02/go/
 peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{"Args":["query","a"]}'
 ```
