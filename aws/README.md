@@ -24,7 +24,7 @@ export ORG_DOMAIN="org1.example.com"
 export ORDERER_ORG_NAME="OrdererOrg"
 export ORDERER_ORG_DOMAIN="ordererorg"
 export TEST_CHANNEL_NAME="ch1"
-export TEST_CHAINCODE_NAME="ch1"
+export TEST_CHAINCODE_NAME="mycc"
 cd first-network
 ./bootstrap.sh
 ```
@@ -35,6 +35,7 @@ cd first-network
 
 * tlsca.ordererorg-cert.pem
 * public-load-balancer-dns-name.org1
+* admin-ec2-public-ip.org1
 
 ## STEP 2. Org3-Network Bootstrap
 
@@ -49,6 +50,8 @@ export ORG_NAME="Org3"
 export ORG_DOMAIN="org3.example.com"
 export HOST_ORG_DOMAIN="org1.example.com"
 export ORDERER_ORG_DOMAIN="ordererorg"
+export TEST_CHANNEL_NAME="ch1"
+export TEST_CHAINCODE_NAME="mycc"
 cd add-org3
 ./bootstrap.sh
 ```
@@ -59,29 +62,29 @@ cd add-org3
 
 * channel-artifact.json
 * public-load-balaancer-dns-name.org3
+* admin-ec2-public-ip.org3
 
 ## STEP 3. Add Org3 to First-Network
 
 `channel-artifact.json`을 admin instance 의 /tmp 경로에 복사 한 후, cli docker container를 이용해서 add-org script 실행
 
 ```bash
-export CHANNEL_NAME="ch1"
 export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
 scp -i ~/.ssh/id_rsa ./artifacts/channel-artifact.json ec2-user@${ADMIN_EC2_PUBLIC_IP}:/tmp
 ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
 docker exec -it cli bash
-export CHANNEL_NAME="ch1"
-peer channel fetch config config_block.pb -o orderer0.ordererorg:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
+export TEST_CHANNEL_NAME="ch1"
+peer channel fetch config config_block.pb -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
 configtxlator proto_decode --input config_block.pb --type common.Block | jq .data.data[0].payload.data.config > config.json
 jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"Org3MSP":.[1]}}}}}' ./config.json ./channel-artifact.json > ./modified_config.json
 configtxlator proto_encode --input ./config.json --type common.Config >original_config.pb
 configtxlator proto_encode --input ./modified_config.json --type common.Config >modified_config.pb
-configtxlator compute_update --channel_id "${CHANNEL_NAME}" --original original_config.pb --updated modified_config.pb >config_update.pb
+configtxlator compute_update --channel_id "${TEST_CHANNEL_NAME}" --original original_config.pb --updated modified_config.pb >config_update.pb
 configtxlator proto_decode --input config_update.pb --type common.ConfigUpdate >config_update.json
-echo '{"payload":{"header":{"channel_header":{"channel_id":"'$CHANNEL_NAME'", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' | jq . >config_update_in_envelope.json
+echo '{"payload":{"header":{"channel_header":{"channel_id":"'$TEST_CHANNEL_NAME'", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' | jq . >config_update_in_envelope.json
 configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope >org3_update_in_envelope.pb
 peer channel signconfigtx -f "org3_update_in_envelope.pb"
-peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer0.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS
+peer channel update -f org3_update_in_envelope.pb -c $TEST_CHANNEL_NAME -o orderer0.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
 ## STEP 4. Join test-channel
@@ -90,13 +93,13 @@ channel-join script 실행 후, chaincode install
 
 ```bash
 docker exec -it cli bash
-export CHANNEL_NAME="ch1"
+export TEST_CHANNEL_NAME="ch1"
 echo "${gw0-private_ip} orderer0.ordererorg" >> /etc/hosts
-peer channel fetch 0 $CHANNEL_NAME.block -o orderer0.ordererorg:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
-peer channel join -b $CHANNEL_NAME.block
+peer channel fetch 0 $TEST_CHANNEL_NAME.block -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
+peer channel join -b $TEST_CHANNEL_NAME.block
 ```
 
 ```bash
-peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
-peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
+peer chaincode install -n ${TEST_CHAINCODE_NAME} -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{"Args":["query","a"]}'
 ```
