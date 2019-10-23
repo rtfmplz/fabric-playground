@@ -12,5 +12,8 @@ services:
       file: cli.yaml
       service: cli
     container_name: cli
+    environment:
+      - TEST_CHANNEL_NAME=${TEST_CHANNEL_NAME} 
+      - TEST_CHAINCODE_NAME=${TEST_CHAINCODE_NAME} 
     networks:
       - default

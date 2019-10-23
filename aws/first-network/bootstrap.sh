@@ -3,6 +3,11 @@
 ##############################################################
 # Variables
 ##############################################################
+if [ -z ${TEST_CHAINCODE_NAME} ]; then
+  echo "TEST_CHAINCODE_NAME is required."
+  exit 1;
+fi
+
 if [ -z ${TEST_CHANNEL_NAME} ]; then
   echo "TEST_CHANNEL_NAME is required."
   exit 1;
@@ -104,6 +109,8 @@ sleep ${INTERVAL}
 server_keyfile=$(tree ${FABRIC_RESOURCES_DIR}/${CA_MSP_DIR} | grep "sk" | awk '{print $2}')
 rm -rf ${FABRIC_RESOURCES_DIR}/.env
 cat << EOF >> ${FABRIC_RESOURCES_DIR}/.env
+TEST_CHANNEL_NAME=${TEST_CHANNEL_NAME}
+TEST_CHAINCODE_NAME=${TEST_CHAINCODE_NAME}
 ORDERER_ORG_NAME=${ORDERER_ORG_NAME}
 ORDERER_ORG_HOSTNAME=${ORDERER_ORG_HOSTNAME}
 ORDERER_ORG_DOMAIN=${ORDERER_ORG_DOMAIN}

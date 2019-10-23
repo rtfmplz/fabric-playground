@@ -40,6 +40,7 @@ resource "null_resource" "admin-provisioner" {
 		"docker network create ${var.docker_network}",
 		"echo DOCKER_NETWORK=${var.docker_network} >> /tmp/.env",
 	 	"pushd /tmp ; docker-compose -f /tmp/admin.yaml up -d ; popd",
+        "chmod +x /tmp/scripts/admin.sh; docker exec cli ./scripts/admin.sh",
     	] 
 	}
 }

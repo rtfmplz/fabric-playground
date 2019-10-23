@@ -24,45 +24,9 @@ export ORG_DOMAIN="org1.example.com"
 export ORDERER_ORG_NAME="OrdererOrg"
 export ORDERER_ORG_DOMAIN="ordererorg"
 export TEST_CHANNEL_NAME="ch1"
+export TEST_CHAINCODE_NAME="ch1"
 cd first-network
 ./bootstrap.sh
-```
-
-### test chaincode 설치 (추후 script로 만들 예정)
-
-```bash
-export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
-ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
-docker exec -it cli bash
-```
-
-```bash
-docker exec -it cli /bin/bash
-```
-
-```bash
-peer channel create -o orderer0.ordererorg:7050 -c ch1 -f ch1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
-```
-
-```bash
-peer channel join -b ch1.block
-```
-
-```bash
-peer channel update -o orderer0.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
-```
-
-```bash
-peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
-```
-
-```bash
-# w/ TLS
-peer chaincode instantiate -o orderer0.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
-```
-
-```bash
-peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 ```
 
 ### output files for first-network
