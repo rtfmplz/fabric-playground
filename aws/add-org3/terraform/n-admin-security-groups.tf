@@ -42,6 +42,14 @@ resource "aws_security_group" "admin-sg" {
   }
 
   egress {
+    description = "to ordererorg "
+    from_port   = 7050
+    to_port     = 7050
+    protocol    = "tcp"
+    cidr_blocks = "${var.public_subnets}"
+  }
+
+  egress {
     description = "for cli "
     from_port   = 7051
     to_port     = 7051

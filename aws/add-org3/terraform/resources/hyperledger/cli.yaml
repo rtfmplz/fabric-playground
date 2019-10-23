@@ -37,5 +37,6 @@ services:
       # - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls:/tmp/hyperledger/fabric/tls
       - ./:/opt/gopath/src/github.com/hyperledger/fabric/peer/
     extra_hosts:
+      - ${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}:${GW1_PRIV_IP}
       - peer0.${ORG_DOMAIN}:${VM0_PRIV_IP}
       - peer1.${ORG_DOMAIN}:${VM1_PRIV_IP}
