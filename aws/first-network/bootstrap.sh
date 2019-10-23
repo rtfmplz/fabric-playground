@@ -154,4 +154,5 @@ pushd terraform
 terraform init
 terraform apply
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org1
+echo "aws_instance.admin.public_ip" | terraform console > ../artifacts/admin-ec2-public-ip.org1
 popd
