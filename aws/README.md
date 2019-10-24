@@ -40,13 +40,18 @@ cd first-network
 
 ### output files for first-network
 
-> 해당 파일들은 Extra Org에 전달되어야 한다.
+다음 파일은 Extra Org에 전달되어야 한다.
 
 * tlsca.ordererorg-cert.pem
 * public-load-balancer-dns-name.org1
+
+다음 파일은 admin에 SSH 접근을 위해서 사용한다.
+
 * admin-ec2-public-ip.org1
 
 ## STEP 2. Org3-Network Bootstrap
+
+> `tlsca.ordererorg-cert.pem`, `public-load-balancer-dns-name.org1` 및 `add-org3` 폴더는 안전한 채널을 통해 Fabric-network에 참여하고자하는 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.
 
 STEP 1에서 생성된 `tlsca.ordererorg-cert.pem`을 add-org3 폴더 아래 위치 시킨다.
 그리고, `public-load-balancer-dns-name.org1`안의 dns-name을 포함한 기타 환경변수를 export 한 후, bootstrpa.sh 실행
@@ -67,18 +72,24 @@ cd add-org3
 
 ### output files for add-org3
 
-> 해당 파일들은 HOST Org에 전달되어야 한다.
+다음 파일들은 HOST Org에 전달되어야 한다.
 
 * channel-artifact.json
 * public-load-balaancer-dns-name.org3
+
+다음 파일은 admin에 SSH 접근을 위해서 사용한다.
+
 * admin-ec2-public-ip.org3
 
 ## STEP 3. Add Org3 to First-Network
 
-`channel-artifact.json`을 admin instance 의 /tmp 경로에 복사 한 후, cli docker container를 이용해서 add-org script 실행
+> `channel-artifact.json`, `public-load-balaancer-dns-name.org3`는 안전한 채널을 통해 HOST 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.
+
+STEP 2에서 생성된 `channel-artifact.json`을 `first-network/artifacts/` 경로 아래에 복사 한 후 다음 명령들을 수행해서 `org3.example.com`을 fabric-network에 포함시킨다.
+ADMIN_EC2_PUBLIC_IP 값은 STEP 1에서 생성된 `admin-ec2-public-ip.org1`의 내용으로 업데이트 한다.
 
 ```bash
-export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
+export ADMIN_EC2_PUBLIC_IP="13.209.84.9"
 scp -i ~/.ssh/id_rsa ./artifacts/channel-artifact.json ec2-user@${ADMIN_EC2_PUBLIC_IP}:/tmp
 ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
 docker exec -it cli bash
@@ -97,10 +108,11 @@ peer channel update -f org3_update_in_envelope.pb -c $TEST_CHANNEL_NAME -o order
 
 ## STEP 4. Join test-channel
 
-channel-join script 실행 후, chaincode install
+channel-join script 실행 후, chaincode install  
+ADMIN_EC2_PUBLIC_IP 값은 STEP 1에서 생성된 `admin-ec2-public-ip.org3`의 내용으로 업데이트 한다.
 
 ```bash
-export ADMIN_EC2_PUBLIC_IP="52.78.209.246"
+export ADMIN_EC2_PUBLIC_IP="13.209.13.255"
 ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
 docker exec -it cli bash
 peer channel fetch 0 $TEST_CHANNEL_NAME.block -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
@@ -109,7 +121,17 @@ peer chaincode install -n ${TEST_CHAINCODE_NAME} -v 1.0 -p github.com/chaincode/
 peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{"Args":["query","a"]}'
 ```
 
-## Terraform 관련 추가
+### STEP 5. Verification
+
+정상적으로 두 조직이 연결되었는지 확인하기 위해서 `org1.example.com`에서 chaincode invoke를 한 후, `org3.example.com`에서 값의 변화를 확인해 본다.
+
+> `org3.example.com`의 public-load-balancer-dns-name을 `org1.example.com`의 nginx
+
+```bash
+peer chaincode invoke -o orderer0.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -c '{"Args":["invoke","a","b","10"]}'
+```
+
+## Appendix 1. Terraform 관련 추가
 
 ### graph
 

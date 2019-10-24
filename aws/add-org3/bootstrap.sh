@@ -38,10 +38,8 @@ if [ -z "${ORDERER_ORG_DOMAIN}" ]; then
   exit 1;
 fi
 
-[ -e ./${ORDERER_TLS_CA_CERT_FILE} ] && echo "${ORDERER_TLS_CA_CERT_FILE}: OK" || { echo "${ORDERER_TLS_CA_CERT_FILE} could not found."; exit 1; }
-
-FABRIC_RESOURCES_DIR="${PWD}/terraform/resources/hyperledger"
-NGINX_RESOURCES_DIR="${PWD}/terraform/resources/nginx"
+FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
+NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 CRYPTO_CONFIG_FILE="crypto.yaml"
 ORDERER_TLS_CA_CERT_FILE="tlsca.ordererorg-cert.pem"
 FABRIC_CFG_FILE="configtx.yaml"
@@ -54,7 +52,6 @@ ORDERER_TLS_CA_CERT_DIR="ordererOrganizations/ordererorg/msp/tlscacerts/"
 CA_MSP_DIR="${OUTPUT_CRYPTO_DIR}/peerOrganizations/${ORG_DOMAIN}/ca/"
 
 export FABRIC_CFG_PATH=${PWD}
-
 
 ##############################################################
 # Preprocessing : Create resource files
@@ -93,6 +90,7 @@ EOF
 [ -e ./${CRYPTO_CONFIG_FILE} ] && echo "${CRYPTO_CONFIG_FILE}: OK" || { echo "${CRYPTO_CONFIG_FILE} could not found."; exit 1; }
 #[ -e ./${FABRIC_RESOURCES_DIR}/.env ] && echo ".env: OK" || { echo ".env  could not found."; exit 1; }
 [ -e ./${FABRIC_CFG_FILE} ] && echo "${FABRIC_CFG_FILE}: OK" || { echo "${FABRIC_CFG_FILE} could not found."; exit 1; }
+[ -e ./${ORDERER_TLS_CA_CERT_FILE} ] && echo "${ORDERER_TLS_CA_CERT_FILE}: OK" || { echo "${ORDERER_TLS_CA_CERT_FILE} could not found."; exit 1; }
 
 ##############################################################
 # Create crypto materials
@@ -162,7 +160,7 @@ sleep ${INTERVAL}
 #############################################################
 # Bootstrap network
 ##############################################################
-pushd terraform
+pushd bootstrap
 terraform init
 terraform apply
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org3

@@ -34,8 +34,8 @@ if [ -z "${ORDERER_ORG_DOMAIN}" ]; then
 fi
 
 CHANNEL_CONF_TX="${TEST_CHANNEL_NAME}.tx"
-FABRIC_RESOURCES_DIR="${PWD}/terraform/resources/hyperledger"
-NGINX_RESOURCES_DIR="${PWD}/terraform/resources/nginx"
+FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
+NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 GENESIS_BLOCK="genesis.block"
 ANCHOR_PEER_UPDATE_TX="updateAnchorOrg1.tx"
 CRYPTO_CONFIG_FILE="crypto.yaml"
@@ -51,7 +51,6 @@ ORDERER_TLS_CA_CERT_FILE="tlsca.${ORDERER_ORG_DOMAIN}-cert.pem"
 
 CA_MSP_DIR="${OUTPUT_CRYPTO_DIR}/peerOrganizations/${ORG_DOMAIN}/ca/"
 
-
 export FABRIC_CFG_PATH=${PWD}
 
 ##############################################################
@@ -60,7 +59,6 @@ export FABRIC_CFG_PATH=${PWD}
 [ -e ./${CRYPTO_CONFIG_FILE} ] && echo "${CRYPTO_CONFIG_FILE}: OK" || { echo "${CRYPTO_CONFIG_FILE} could not found."; exit 1; }
 #[ -e ./${FABRIC_RESOURCES_DIR}/.env ] && echo ".env: OK" || { echo ".env  could not found."; exit 1; }
 [ -e ./${FABRIC_CFG_FILE} ] && echo "${FABRIC_CFG_FILE}: OK" || { echo "${FABRIC_CFG_FILE} could not found."; exit 1; }
-
 
 ##############################################################
 # Create crypto materials
@@ -72,7 +70,6 @@ fi
 cryptogen generate --config=${CRYPTO_CONFIG_FILE} --output=./${OUTPUT_CRYPTO_DIR}
 cp -avR ${OUTPUT_CRYPTO_DIR} ${FABRIC_RESOURCES_DIR}
 sleep ${INTERVAL}
-
 
 ##############################################################
 # Create genesis.block
@@ -150,7 +147,7 @@ cp ./${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}/${ORDERER_TLS_CA_CERT_FILE}
 #############################################################
 # Bootstrap network
 ##############################################################
-pushd terraform
+pushd bootstrap
 terraform init
 terraform apply
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org1
