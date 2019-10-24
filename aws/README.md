@@ -92,29 +92,23 @@ STEP 2에서 생성된 `channel-artifact.json`을 `first-network/add-org3/` 경�
 ./add-org.sh
 ```
 
-## STEP 4. Join test-channel
+## STEP 4. Join test-channel & chaincode install  
 
-channel-join script 실행 후, chaincode install  
-ADMIN_EC2_PUBLIC_IP 값은 STEP 1에서 생성된 `admin-ec2-public-ip.org3`의 내용으로 업데이트 한다.
+`admin-ec2-public-ip.org3`의 값으로 `add-org3/join-channel/terraform.tfvars`의 `admin_ec2_public_ip`값을 업데이트 한다.
 
 ```bash
-export ADMIN_EC2_PUBLIC_IP="13.209.13.255"
-ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
-docker exec -it cli bash
-peer channel fetch 0 $TEST_CHANNEL_NAME.block -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
-peer channel join -b $TEST_CHANNEL_NAME.block
-peer chaincode install -n ${TEST_CHAINCODE_NAME} -v 1.0 -p github.com/chaincode/chaincode_example02/go/
-peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{"Args":["query","a"]}'
+./join-channel.sh
 ```
 
 ### STEP 5. Verification
 
 정상적으로 두 조직이 연결되었는지 확인하기 위해서 `org1.example.com`에서 chaincode invoke를 한 후, `org3.example.com`에서 값의 변화를 확인해 본다.
 
-> `org3.example.com`의 public-load-balancer-dns-name을 `org1.example.com`의 nginx
+`org1.example.com`와 `org3.example.com`의 admin instance 에 접속 후, cli docker container에 들어가서 chaincode invoke와 query를 해보면 값이 반영됨을 확인 할 수 있다.
 
 ```bash
 peer chaincode invoke -o orderer0.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -c '{"Args":["invoke","a","b","10"]}'
+peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{"Args":["query","a"]}'
 ```
 
 ## Appendix 1. Terraform 관련 추가
