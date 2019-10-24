@@ -85,25 +85,11 @@ cd add-org3
 
 > `channel-artifact.json`, `public-load-balaancer-dns-name.org3`는 안전한 채널을 통해 HOST 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.
 
-STEP 2에서 생성된 `channel-artifact.json`을 `first-network/artifacts/` 경로 아래에 복사 한 후 다음 명령들을 수행해서 `org3.example.com`을 fabric-network에 포함시킨다.
-ADMIN_EC2_PUBLIC_IP 값은 STEP 1에서 생성된 `admin-ec2-public-ip.org1`의 내용으로 업데이트 한다.
+STEP 2에서 생성된 `channel-artifact.json`을 `first-network/add-org3/` 경로 아래에 복사 한 후 다음 명령을 수행해서 `org3.example.com`을 fabric-network에 포함시킨다.
+`admin-ec2-public-ip.org1`의 값으로 `first-network/add-org3/terraform.tfvars`의 `admin_ec2_public_ip`값을 업데이트 한다.
 
 ```bash
-export ADMIN_EC2_PUBLIC_IP="13.209.84.9"
-scp -i ~/.ssh/id_rsa ./artifacts/channel-artifact.json ec2-user@${ADMIN_EC2_PUBLIC_IP}:/tmp
-ssh -i ~/.ssh/id_rsa ec2-user@${ADMIN_EC2_PUBLIC_IP}
-docker exec -it cli bash
-peer channel fetch config config_block.pb -o orderer0.ordererorg:7050 -c $TEST_CHANNEL_NAME --tls --cafile $ORDERER_ORG_TLSCACERTS
-configtxlator proto_decode --input config_block.pb --type common.Block | jq .data.data[0].payload.data.config > config.json
-jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"Org3MSP":.[1]}}}}}' ./config.json ./channel-artifact.json > ./modified_config.json
-configtxlator proto_encode --input ./config.json --type common.Config >original_config.pb
-configtxlator proto_encode --input ./modified_config.json --type common.Config >modified_config.pb
-configtxlator compute_update --channel_id "${TEST_CHANNEL_NAME}" --original original_config.pb --updated modified_config.pb >config_update.pb
-configtxlator proto_decode --input config_update.pb --type common.ConfigUpdate >config_update.json
-echo '{"payload":{"header":{"channel_header":{"channel_id":"'$TEST_CHANNEL_NAME'", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' | jq . >config_update_in_envelope.json
-configtxlator proto_encode --input config_update_in_envelope.json --type common.Envelope >org3_update_in_envelope.pb
-peer channel signconfigtx -f "org3_update_in_envelope.pb"
-peer channel update -f org3_update_in_envelope.pb -c $TEST_CHANNEL_NAME -o orderer0.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS
+./add-org.sh
 ```
 
 ## STEP 4. Join test-channel
