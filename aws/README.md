@@ -21,6 +21,22 @@ export EMAIL="kjlee.ko@gmail.com"
 ssh-keygen -t rsa -b 4096 -C $EMAIL -f "$HOME/.ssh/id_rsa" -N ""
 ```
 
+### Install or Exports Commands
+
+bootstrap.sh 스크립트 실행을 위해서 다음 Hyperledger-Fabric CLI 명령과 기타 Unix Command가 필요하다.
+
+#### Export Hyperledger-fabric Tools
+
+```bash
+export PATH=$PATH:$PWD/hlf-tools
+```
+
+#### Install Commands
+
+```bash
+brew install tree
+```
+
 ## STEP 1. First-Network Bootstrap
 
 다음 환경변수 추가 후, bootstrpa.sh 실행 한다.
