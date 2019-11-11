@@ -17,8 +17,7 @@ export AWS_SECRET_ACCESS_KEY="asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
 ### EC2에 ssh 접속을 위한 RSA KEY PAIR 생성
 
 ```bash
-export EMAIL="kjlee.ko@gmail.com"
-ssh-keygen -t rsa -b 4096 -C $EMAIL -f "$HOME/.ssh/id_rsa" -N ""
+ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -N ""
 ```
 
 ### Install or Exports Commands
@@ -35,6 +34,7 @@ export PATH=$PATH:$PWD/hlf-tools
 
 ```bash
 brew install tree
+brew install terraform
 ```
 
 ## STEP 1. First-Network Bootstrap
