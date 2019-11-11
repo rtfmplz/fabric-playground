@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CHANNEL_ARTIFACT="channel-artifact.json"
+CHANNEL_ARTIFACT="./add-org3/channel-artifact.json"
 
-if [ -z ${CHANNEL_ARTIFACT} ]; then
+if [ ! -e ${CHANNEL_ARTIFACT} ]; then
   echo "CHANNEL_ARTIFACT is required."
   exit 1;
 fi

@@ -102,17 +102,19 @@ cd add-org3
 > `channel-artifact.json`, `public-load-balaancer-dns-name.org3`는 안전한 채널을 통해 HOST 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.
 
 STEP 2에서 생성된 `channel-artifact.json`을 `first-network/add-org3/` 경로 아래에 복사 한 후 다음 명령을 수행해서 `org3.example.com`을 fabric-network에 포함시킨다.
-`admin-ec2-public-ip.org1`의 값으로 `first-network/add-org3/terraform.tfvars`의 `admin_ec2_public_ip`값을 업데이트 한다.
+`admin-ec2-public-ip.org1`의 값으로 아래 `0.0.0.0` 을 업데이트 한 후 아래 명령을 실행한다.
 
 ```bash
-./add-org.sh
+export TF_VAR_admin_ec2_public_ip="0.0.0.0"
+./add-org3.sh
 ```
 
 ## STEP 4. Join test-channel & chaincode install  
 
-`admin-ec2-public-ip.org3`의 값으로 `add-org3/join-channel/terraform.tfvars`의 `admin_ec2_public_ip`값을 업데이트 한다.
+`admin-ec2-public-ip.org3`의 값으로 아래 `0.0.0.0` 을 업데이트 한 후 아래 명령을 실행한다.
 
 ```bash
+export TF_VAR_admin_ec2_public_ip="0.0.0.0"
 ./join-channel.sh
 ```
 

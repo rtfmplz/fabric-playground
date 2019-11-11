@@ -10,6 +10,7 @@ variable "admin_ec2_public_ip" {
 
 variable "ec2_key_pair_name" {
   description = "EC2 instance key pair name"
+  default = "KP101"
 }
 
 variable "ec2_key_path" {
