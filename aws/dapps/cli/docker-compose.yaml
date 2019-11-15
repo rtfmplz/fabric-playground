@@ -1,0 +1,43 @@
+version: "2"
+
+services:
+
+  cli:
+    image: hyperledger/fabric-tools:latest
+    container_name: cli
+    hostname: cli
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    tty: true
+    stdin_open: true
+    network_mode: "host"
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+
+      # FOR CLI
+      - CORE_PEER_ID=cli
+      ## When used as CLI config, this means the peer'sendpoint to interact with
+      - CORE_PEER_ADDRESS=peer0.${ORG_DOMAIN}:57051
+      - CORE_PEER_LOCALMSPID=${ORG_NAME}MSP
+      ## MSP for CLI as Dapp
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG_DOMAIN}/users/Admin@${ORG_DOMAIN}/msp
+
+      # TLS
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls/ca.crt
+      - ORDERER_ORG_TLSCACERTS=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/ordererorg/msp/tlscacerts/tlsca.ordererorg-cert.pem
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./chaincode_example02/:/opt/gopath/src/github.com/chaincode/chaincode_example02
+      # - /tmp/crypto:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      # - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/msp:/tmp/hyperledger/fabric/msp
+      # - /tmp/crypto/peerOrganizations/${ORG_DOMAIN}/peers/peer0.${ORG_DOMAIN}/tls:/tmp/hyperledger/fabric/tls
+      - ./:/opt/gopath/src/github.com/hyperledger/fabric/peer/
+    extra_hosts:
+      - ${ORDERER_ORG_HOSTNAME}.${ORDERER_ORG_DOMAIN}:${NLB_PUBLIC_IP}
+      - peer0.${ORG_DOMAIN}:${NLB_PUBLIC_IP}
+      - peer1.${ORG_DOMAIN}:${NLB_PUBLIC_IP}
