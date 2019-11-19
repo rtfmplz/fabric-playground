@@ -12,7 +12,9 @@
 
 ## Prerequisites
 
-> 본 Minimal Network는 `cryptogen`, `configtxgen` 을 이용해서 구축된다.
+> 본 Minimal Network는 `cryptogen`, `configtxgen` 을 이용해서 구축된다.  
+> Prerequisites에 필요한 과정들을 `bootstrap.sh`을 이용해서 한번에 수행할 수 있다.  
+> `bootstrap.sh`을 사용한다면 바로 "Create, join channel & update Anchor peer" 로 넘어가면 된다.  
 
 ### Create Hyperledger Fabric Materials
 
@@ -83,16 +85,13 @@ docker-compose up -d
 
 ## Create, join channel & update Anchor peer
 
-> [주의] w/ TLS 명령을 사용하는 경우 cli, peer, orderer의 tls enable 관련 설정을 true로 해 주어야 한다.
+> [주의] minimal의 peer, orderer는 tls true 설정을 기본으로 한다.
 
 ```bash
 docker exec -it cli /bin/bash
 ```
 
 ```bash
-# w/o TLS
-peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx
-# w/ TLS
 peer channel create -o orderer1.ordererorg:7050 -c ch1 -f ch1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
@@ -101,9 +100,6 @@ peer channel join -b ch1.block
 ```
 
 ```bash
-# w/o TLS
-peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx
-# w/ TLS
 peer channel update -o orderer1.ordererorg:7050 -c ch1 -f ./updateAnchorOrg1.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
 
@@ -120,9 +116,6 @@ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example0
 * instantiate chaincode
 
 ```bash
-# w/o TLS
-peer chaincode instantiate -o orderer1.ordererorg:7050 -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
-# w/ TLS
 peer chaincode instantiate -o orderer1.ordererorg:7050 --tls --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member')"
 ```
 
@@ -133,9 +126,6 @@ peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 * invoke chaincode
 
 ```bash
-# w/o TLS
-peer chaincode invoke -o orderer1.ordererorg:7050 -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
-# w/ TLS
 peer chaincode invoke -o orderer1.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc --peerAddresses peer1.org1:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1/peers/peer1.org1/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
 ```
 
