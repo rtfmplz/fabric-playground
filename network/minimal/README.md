@@ -166,3 +166,44 @@ Block이 복제되면 qeury가 가능하다.
 ```bash
 CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args":["query","a"]}'
 ```
+
+## Add Channel
+
+`configtx.yaml`에는 `OrgsChannel` 외에도 `AAAChannel`에 대한 정의가 함하메 들어이이다.
+`AAAChannel` 이용해서 `ch2`를 생성하고 체인코드를 설치, 확인한다.
+
+> `AAAChannel`은 `OrgsChannel`과 컨소시움을 고유한다.  
+> 컨소시움을 추가 하는 방법에 대해서는 이 글에서는 다루지 않는다.
+
+* Create Channel Transaction
+
+```bash
+configtxgen -profile AAAChannel -outputCreateChannelTx chr2.tx -channelID ch2
+```
+
+* Create channel transaction for update Org1 anchor peer
+
+```bash
+configtxgen -profile AAAChannel -outputAnchorPeersUpdate updateAnchorOrg1_2.tx -channelID ch2 -asOrg Org1
+```
+
+* Create Channel & Join
+
+```bash
+docker exec -it cli /bin/bash
+```
+
+```bash
+peer channel create -o orderer1.ordererorg:7050 -c ch2 -f ch2.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+```bash
+peer channel join -b ch2.block
+```
+
+```bash
+peer channel update -o orderer1.ordererorg:7050 -c ch2 -f ./updateAnchorOrg1_2.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
+```
+
+
+

@@ -74,3 +74,12 @@ Profiles:
                 - *Org1
             Capabilities:
                 <<: *ApplicationCapabilities
+
+    AAAChannel:
+        Consortium: OrgConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+            Capabilities:
+                <<: *ApplicationCapabilities
