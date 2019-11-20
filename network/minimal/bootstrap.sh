@@ -89,8 +89,8 @@ sleep ${INTERVAL}
 # Update FABRIC_CA_SERVER_CA_KEYFILE
 # [FIXME] Why created .env-e
 ##############################################################
-# tree crypto/peerOrganizations/org1/ca/ | grep sk | awk '{print "FABRIC_CA_SERVER_CA_KEYFILE="$2}' | xargs -I {} sed -i -e 's/^FABRIC_CA_SERVER_CA_KEYFILE=.*$/{}/g' .env
-tree crypto/peerOrganizations/org1/ca/ | grep sk | awk '{print "FABRIC_CA_SERVER_CA_KEYFILE="$2}' >> .env
+tree crypto/peerOrganizations/org1/ca/ | grep sk | awk '{print "FABRIC_CA_SERVER_CA_KEYFILE="$2}' | xargs -I {} sed -i -e 's/^FABRIC_CA_SERVER_CA_KEYFILE=.*$/{}/g' .env
+# tree crypto/peerOrganizations/org1/ca/ | grep sk | awk '{print "FABRIC_CA_SERVER_CA_KEYFILE="$2}' >> .env
 sleep ${INTERVAL}
 
 #############################################################
