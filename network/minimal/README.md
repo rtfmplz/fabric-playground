@@ -178,7 +178,7 @@ CORE_PEER_ADDRESS=peer2.org1:7051 peer chaincode query -C ch1 -n mycc -c '{"Args
 * Create Channel Transaction
 
 ```bash
-configtxgen -profile AAAChannel -outputCreateChannelTx chr2.tx -channelID ch2
+configtxgen -profile AAAChannel -outputCreateChannelTx ch2.tx -channelID ch2
 ```
 
 * Create channel transaction for update Org1 anchor peer
