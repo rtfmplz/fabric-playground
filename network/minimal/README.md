@@ -204,6 +204,3 @@ peer channel join -b ch2.block
 ```bash
 peer channel update -o orderer1.ordererorg:7050 -c ch2 -f ./updateAnchorOrg1_2.tx --tls --cafile $ORDERER_ORG_TLSCACERTS
 ```
-
-
-
