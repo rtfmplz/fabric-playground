@@ -162,7 +162,7 @@ sleep ${INTERVAL}
 ##############################################################
 pushd bootstrap
 terraform init
-terraform apply
+terraform apply -auto-approve
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org3
 echo "aws_instance.admin.public_ip" | terraform console > ../artifacts/admin-ec2-public-ip.org3
 popd

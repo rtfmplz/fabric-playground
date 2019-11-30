@@ -9,5 +9,5 @@ fi
 
 pushd add-org3
 terraform init
-terraform apply
+terraform apply -auto-approve
 popd

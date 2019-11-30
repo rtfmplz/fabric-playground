@@ -2,5 +2,5 @@
 
 pushd join-channel
 terraform init
-terraform apply
+terraform apply -auto-approve
 popd
