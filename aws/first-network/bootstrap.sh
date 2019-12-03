@@ -35,6 +35,7 @@ fi
 
 CHANNEL_CONF_TX="${TEST_CHANNEL_NAME}.tx"
 FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
+DAPPS_RESOURCES_DIR="${PWD}/dapps"
 NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 GENESIS_BLOCK="genesis.block"
 ANCHOR_PEER_UPDATE_TX="updateAnchorOrg1.tx"
@@ -66,9 +67,11 @@ export FABRIC_CFG_PATH=${PWD}
 if [ -e ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ]; then
   rm -rf ${OUTPUT_CRYPTO_DIR}
   rm -rf ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
+  rm -rf ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
 fi
 cryptogen generate --config=${CRYPTO_CONFIG_FILE} --output=./${OUTPUT_CRYPTO_DIR}
 cp -avR ${OUTPUT_CRYPTO_DIR} ${FABRIC_RESOURCES_DIR}
+cp -avR ${OUTPUT_CRYPTO_DIR} ${DAPPS_RESOURCES_DIR}
 sleep ${INTERVAL}
 
 ##############################################################
@@ -83,19 +86,19 @@ sleep ${INTERVAL}
 ##############################################################
 # Create channel configuration
 ##############################################################
-if [ -e ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
-  rm -rf ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX}
+if [ -e ${DAPPS_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
+  rm -rf ${DAPPS_RESOURCES_DIR}/${CHANNEL_CONF_TX}
 fi
-configtxgen -profile OrgsChannel -outputCreateChannelTx ${FABRIC_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${TEST_CHANNEL_NAME}
+configtxgen -profile OrgsChannel -outputCreateChannelTx ${DAPPS_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${TEST_CHANNEL_NAME}
 sleep ${INTERVAL}
 
 ##############################################################
 # Create org1 anchor peer update configuration
 ##############################################################
-if [ -e ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
-  rm -rf ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
+if [ -e ${DAPPS_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
+  rm -rf ${DAPPS_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
 fi
-configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${FABRIC_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${TEST_CHANNEL_NAME} -asOrg ${ORG_NAME}
+configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${DAPPS_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${TEST_CHANNEL_NAME} -asOrg ${ORG_NAME}
 sleep ${INTERVAL}
 
 
@@ -151,5 +154,21 @@ pushd bootstrap
 terraform init
 terraform apply -auto-approve
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org1
-echo "aws_instance.admin.public_ip" | terraform console > ../artifacts/admin-ec2-public-ip.org1
 popd
+
+rm -rf ${DAPPS_RESOURCES_DIR}/.env
+cat << EOF >> ${DAPPS_RESOURCES_DIR}/.env
+TEST_CHANNEL_NAME=${TEST_CHANNEL_NAME}
+TEST_CHAINCODE_NAME=${TEST_CHAINCODE_NAME}
+ORDERER_ORG_NAME=${ORDERER_ORG_NAME}
+ORDERER_ORG_HOSTNAME=${ORDERER_ORG_HOSTNAME}
+ORDERER_ORG_DOMAIN=${ORDERER_ORG_DOMAIN}
+ORG_NAME=${ORG_NAME}
+ORG_DOMAIN=${ORG_DOMAIN}
+DOCKER_NETWORK=${DOCKER_NETWORK}
+
+MY_ORG_NLB_PUBLIC_IP=$(cat "./artifacts/public-load-balancer-dns-name.org1" | xargs arp | awk '{print substr($2, 2, length($2)-2)}')
+ORDERER_ORG_NLB_PUBLIC_IP=$(cat "./artifacts/public-load-balancer-dns-name.org1" | xargs arp | awk '{print substr($2, 2, length($2)-2)}')
+EOF
+
+
