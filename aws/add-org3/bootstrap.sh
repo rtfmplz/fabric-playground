@@ -13,11 +13,6 @@ if [ -z ${TEST_CHANNEL_NAME} ]; then
   exit 1;
 fi
 
-if [ -z ${HOST_ENDPOINT_DNS_NAME} ]; then
-  echo "HOST_ENDPOINT_DNS_NAME is required."
-  exit 1;
-fi
-
 if [ -z "${ORG_NAME}" ]; then
   echo "ORG_NAME is required."
   exit 1;
@@ -39,15 +34,17 @@ if [ -z "${ORDERER_ORG_DOMAIN}" ]; then
 fi
 
 FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
+DAPPS_RESOURCES_DIR="${PWD}/dapps"
 NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 CRYPTO_CONFIG_FILE="crypto.yaml"
 ORDERER_TLS_CA_CERT_FILE="tlsca.ordererorg-cert.pem"
+ORDERER_ORG_DNS_NAME_FILE="public-load-balancer-dns-name.org1"
 FABRIC_CFG_FILE="configtx.yaml"
 CHANNEL_ARTIFACT="channel-artifact.json"
 INTERVAL=1
 DOCKER_NETWORK="hyperledger"
 ORDERER_ORG_HOSTNAME="orderer0"
-OUTPUT_CRYPTO_DIR="${FABRIC_RESOURCES_DIR}/crypto"
+OUTPUT_CRYPTO_DIR="crypto"
 ORDERER_TLS_CA_CERT_DIR="ordererOrganizations/ordererorg/msp/tlscacerts/"
 CA_MSP_DIR="${OUTPUT_CRYPTO_DIR}/peerOrganizations/${ORG_DOMAIN}/ca/"
 
@@ -78,7 +75,7 @@ Organizations:
   - &${ORG_NAME}
     Name: ${ORG_NAME}
     ID: ${ORG_NAME}MSP
-    MSPDir: ${OUTPUT_CRYPTO_DIR}/peerOrganizations/${ORG_DOMAIN}/msp
+    MSPDir: ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/peerOrganizations/${ORG_DOMAIN}/msp
     AnchorPeers:
       - Host: peer0.${ORG_DOMAIN}
         Port: 7051
@@ -91,21 +88,26 @@ EOF
 #[ -e ./${FABRIC_RESOURCES_DIR}/.env ] && echo ".env: OK" || { echo ".env  could not found."; exit 1; }
 [ -e ./${FABRIC_CFG_FILE} ] && echo "${FABRIC_CFG_FILE}: OK" || { echo "${FABRIC_CFG_FILE} could not found."; exit 1; }
 [ -e ./${ORDERER_TLS_CA_CERT_FILE} ] && echo "${ORDERER_TLS_CA_CERT_FILE}: OK" || { echo "${ORDERER_TLS_CA_CERT_FILE} could not found."; exit 1; }
+[ -e ./${ORDERER_ORG_DNS_NAME_FILE} ] && echo "${ORDERER_ORG_DNS_NAME_FILE}: OK" || { echo "${ORDERER_ORG_DNS_NAME_FILE} could not found."; exit 1; }
 
 ##############################################################
 # Create crypto materials
 ##############################################################
-if [ -e ${OUTPUT_CRYPTO_DIR} ]; then
-  rm -rf ${OUTPUT_CRYPTO_DIR}
+if [ -e ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ]; then
+  rm -rf ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
+  rm -rf ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
 fi
-cryptogen generate --config=${CRYPTO_CONFIG_FILE} --output=${OUTPUT_CRYPTO_DIR}
+cryptogen generate --config=${CRYPTO_CONFIG_FILE} --output=${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
+cp -avR ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ${DAPPS_RESOURCES_DIR}
 sleep ${INTERVAL}
 
 #############################################################
 # COPY Orderer TLS CERT
 ##############################################################
-mkdir -p ${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
-cp ${ORDERER_TLS_CA_CERT_FILE} ${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
+mkdir -p ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
+cp ${ORDERER_TLS_CA_CERT_FILE} ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
+mkdir -p ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
+cp ${ORDERER_TLS_CA_CERT_FILE} ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
 sleep ${INTERVAL}
 
 ##############################################################
@@ -135,7 +137,7 @@ cat << EOF >> ${NGINX_RESOURCES_DIR}/.env
 ORDERER_ORG_HOSTNAME=${ORDERER_ORG_HOSTNAME}
 ORDERER_ORG_DOMAIN=${ORDERER_ORG_DOMAIN}
 HOST_ORG_DOMAIN=${HOST_ORG_DOMAIN}
-HOST_ORG_GW_IP=${HOST_ENDPOINT_DNS_NAME}
+HOST_ORG_GW_IP=$(cat "./public-load-balancer-dns-name.org1")
 ORG_NAME=${ORG_NAME}
 ORG_DOMAIN=${ORG_DOMAIN}
 DOCKER_NETWORK=${DOCKER_NETWORK}
@@ -164,5 +166,19 @@ pushd bootstrap
 terraform init
 terraform apply -auto-approve
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org3
-echo "aws_instance.admin.public_ip" | terraform console > ../artifacts/admin-ec2-public-ip.org3
+# echo "aws_instance.admin.public_ip" | terraform console > ../artifacts/admin-ec2-public-ip.org3
 popd
+
+rm -rf ${DAPPS_RESOURCES_DIR}/.env
+cat << EOF >> ${DAPPS_RESOURCES_DIR}/.env
+TEST_CHANNEL_NAME=${TEST_CHANNEL_NAME}
+TEST_CHAINCODE_NAME=${TEST_CHAINCODE_NAME}
+ORDERER_ORG_HOSTNAME=${ORDERER_ORG_HOSTNAME}
+ORDERER_ORG_DOMAIN=${ORDERER_ORG_DOMAIN}
+ORG_NAME=${ORG_NAME}
+ORG_DOMAIN=${ORG_DOMAIN}
+DOCKER_NETWORK=${DOCKER_NETWORK}
+
+MY_ORG_NLB_PUBLIC_IP=$(cat "./artifacts/public-load-balancer-dns-name.org3" | xargs arp | awk '{print substr($2, 2, length($2)-2)}')
+ORDERER_ORG_NLB_PUBLIC_IP=$(cat "./public-load-balancer-dns-name.org1" | xargs arp | awk '{print substr($2, 2, length($2)-2)}')
+EOF

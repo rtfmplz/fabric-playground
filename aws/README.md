@@ -71,7 +71,8 @@ docker exec -it cli.org1.example.com sh -c "./install_chaincode.sh"
 chaincode가 정상적으로 동작하는지 아래 명령으로 확인해 본다.
 
 ```bash
-docker exec -it cli.org1.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
+[FIXME] script 로 만들기
+docker exec -it cli.org1.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:57050 --tls true --cafile ${ORDERER_ORG_TLSCACERTS} -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
 docker exec -it cli.org1.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
 ```
 
@@ -82,21 +83,15 @@ docker exec -it cli.org1.example.com sh -c "peer chaincode query -C ${TEST_CHANN
 * tlsca.ordererorg-cert.pem
 * public-load-balancer-dns-name.org1
 
-다음 파일은 admin에 SSH 접근을 위해서 사용한다.
-
-* admin-ec2-public-ip.org1
-
 ## STEP 2. Org3-Network Bootstrap
 
 > `tlsca.ordererorg-cert.pem`, `public-load-balancer-dns-name.org1` 및 `add-org3` 폴더는 안전한 채널을 통해 Fabric-network에 참여하고자하는 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.
 
-STEP 1에서 생성된 `tlsca.ordererorg-cert.pem`을 add-org3 폴더 아래 위치 시킨다.
-그리고, `public-load-balancer-dns-name.org1`안의 dns-name을 포함한 기타 환경변수를 export 한 후, bootstrpa.sh 실행
+STEP 1에서 생성된 `tlsca.ordererorg-cert.pem`, `public-load-balancer-dns-name.org1`을 add-org3 폴더 아래 위치 시킨 후, bootstrpa.sh 실행
 
 ```bash
 export AWS_ACCESS_KEY_ID="QWERQWERQWERQWERQWER"
 export AWS_SECRET_ACCESS_KEY="qwerqwerqwerqwerqwerqwerqwerqwerqwerqwer"
-export HOST_ENDPOINT_DNS_NAME="public-load-balancer-4d490c0338a4abcf.elb.ap-northeast-2.amazonaws.com"
 export ORG_NAME="Org3"
 export ORG_DOMAIN="org3.example.com"
 export HOST_ORG_DOMAIN="org1.example.com"
@@ -112,57 +107,37 @@ cd add-org3
 다음 파일들은 HOST Org에 전달되어야 한다.
 
 * channel-artifact.json
-* public-load-balaancer-dns-name.org3
-
-다음 파일은 admin에 SSH 접근을 위해서 사용한다.
-
-* admin-ec2-public-ip.org3
+* public-load-balaancer-dns-name.org3 (여기서는 쓰이지 않지만, org간 gossip 통신을 위해서 방화벽을 열기 위해 쓰일 수 있다.)
 
 ## STEP 3. Add Org3 to First-Network
 
 > `channel-artifact.json`, `public-load-balaancer-dns-name.org3`는 안전한 채널을 통해 HOST 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.  
 
-STEP 2에서 생성된 `channel-artifact.json`을 `first-network/add-org3/` 경로 아래에 복사 한 후 `add-org3.sh` 실행해서 `org3.example.com`을 fabric-network에 포함시킨다.
+STEP 2에서 생성된 `channel-artifact.json`을 `first-network/dapps/` 경로 아래에 복사 한 후 `add-org3.sh` 실행해서 `org3.example.com`을 fabric-network에 포함시킨다.
 `admin-ec2-public-ip.org1`의 값을 인자로 `add-org3.sh` 스크립트를 실행한다.
 
 ```bash
-cp $PROJECT_ROOT/add-org3/artifacts/channel-artifact.json $PROJECT_ROOT/first-network/add-org3/
-./add-org3.sh "0.0.0.0"
+cd dapps
+docker-compose up -d
+docker exec -it cli.org3.example.com sh -c "./add-org3.sh"
 ```
-
-다음으로 `public-load-balaancer-dns-name.org3`를 이용해서 nginx.conf를 업데이트하고 nginx를 재실행 해준다.
-
-```bash
-# [TODO] Org1 -> Org3로 outbound를 열어주고, `Peer`, `Orderer`가 Org3 Endpoint 주소를 알 수 있도록 하는 Script 작성
-```
-
-> [TODO] Org1으로의 inbound가 열려 있기 때문에 Org3 -> Org1으로의 query는 가능하지만, invoke는 정상적으로 동작하지 않는다.
-> invoke에 대한 response는 `Chaincode invoke successful. result: status:200`을 받지만 실제로 Orderer의 log를 살펴보면 다음과 같은 에러가 발생한다.
->
-> ```bash
-> # 10.0.201.239는 public-subnet에 속한 ec2의 private-ip
-> [orderer.common.broadcast] Handle -> WARN 042 Error reading from 10.0.201.239:33666: rpc error: code = Canceled desc = context canceled
-> [comm.grpc.server] 1 -> INFO 043 streaming call completed grpc.service=orderer.AtomicBroadcast grpc.method=Broadcast grpc.peer_address=10.0.201.239:33666 error="rpc error: code = Canceled desc = context canceled" grpc.code=Canceled grpc.call_duration=20.005644ms
-> ```
 
 ## STEP 4. Join test-channel & chaincode install  
 
 STEP 3에 의해서 조직이 추가되고, 방화벽도 열리면 `admin-ec2-public-ip.org3`의 값을 인자로 `join-channel.sh` 스크립트를 실행한다.
 
 ```bash
-./join-channel.sh "0.0.0.0"
+docker-compose up -d
+docker exec -it cli.org1.example.com sh -c "./join-channel.sh"
 ```
 
 ### STEP 5. Verification
 
-정상적으로 두 조직이 연결되었는지 확인하기 위해서 `org1.example.com`에서 chaincode invoke를 한 후, `org3.example.com`에서 값의 변화를 확인해 본다.  
-`org1.example.com`와 `org3.example.com`의 admin instance 에 접속 후, cli docker container에 들어가서 chaincode invoke와 query를 해보면 값이 반영됨을 확인 할 수 있다.
-
 ```bash
-# ssh -i ~/.ssh/id_rsa ec2-user@0.0.0.0
-docker exec -it cli /bin/bash
-peer chaincode invoke -o orderer0.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -c '{"Args":["invoke","a","b","10"]}'
-peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{"Args":["query","a"]}'
+#docker exec -it cli.org3.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:57050 --tls true --cafile ${ORDERER_ORG_TLSCACERTS} -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
+#docker exec -it cli.org3.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
+docker exec -it cli.org1.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:57050 --tls true --cafile ${ORDERER_ORG_TLSCACERTS} -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
+docker exec -it cli.org1.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
 ```
 
 ## Appendix 1. Terraform 관련 추가

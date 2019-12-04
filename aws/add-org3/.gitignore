@@ -3,3 +3,4 @@ configtx.yaml
 *.tfstate
 artifacts
 *.pem
+*.org1
