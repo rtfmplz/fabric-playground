@@ -20,9 +20,13 @@ export AWS_SECRET_ACCESS_KEY="asdfasdfasdfasdfasdfasdfasdfasdfasdfasdf"
 ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -N ""
 ```
 
-### Install or Exports Commands
+### Commands
 
-bootstrap.sh 스크립트 실행을 위해서 다음 Hyperledger-Fabric CLI 명령과 기타 Unix Command가 필요하다.
+bootstrap.sh 및 기타 스크립트 실행을 위해서 docker, Hyperledger-Fabric CLI 명령과 기타 Unix Command가 필요하다.
+
+#### Docker
+
+Docker for Desktop 을 자신의 운영체제에 알맞은 것으로 설치한다.
 
 #### Export Hyperledger-fabric Tools
 
@@ -53,6 +57,22 @@ export TEST_CHANNEL_NAME="ch1"
 export TEST_CHAINCODE_NAME="mycc"
 cd first-network
 ./bootstrap.sh
+```
+
+네트워크가 AWS 상에 모두 구성되면 cli(fabric-tools)를 통해서 Channel을 생성하고 chaincode를 설치한다.
+
+```bash
+cd cli
+docker-compose up -d
+docker exec -it cli.org1.example.com sh -c "./create_channel.sh"
+docker exec -it cli.org1.example.com sh -c "./install_chaincode.sh"
+```
+
+chaincode가 정상적으로 동작하는지 아래 명령으로 확인해 본다.
+
+```bash
+docker exec -it cli.org1.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:7050 --tls true --cafile $ORDERER_ORG_TLSCACERTS -C ch1 -n mycc -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
+docker exec -it cli.org1.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
 ```
 
 ### output files for first-network
