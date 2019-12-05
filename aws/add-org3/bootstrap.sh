@@ -34,7 +34,7 @@ if [ -z "${ORDERER_ORG_DOMAIN}" ]; then
 fi
 
 FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
-DAPPS_RESOURCES_DIR="${PWD}/dapps"
+DAPPS_RESOURCES_DIR="${PWD}/cli-tools"
 NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 CRYPTO_CONFIG_FILE="crypto.yaml"
 ORDERER_TLS_CA_CERT_FILE="tlsca.ordererorg-cert.pem"

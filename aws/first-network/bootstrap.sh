@@ -35,7 +35,7 @@ fi
 
 CHANNEL_CONF_TX="${TEST_CHANNEL_NAME}.tx"
 FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
-DAPPS_RESOURCES_DIR="${PWD}/dapps"
+DAPPS_RESOURCES_DIR="${PWD}/cli-tools"
 NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 GENESIS_BLOCK="genesis.block"
 ANCHOR_PEER_UPDATE_TX="updateAnchorOrg1.tx"
