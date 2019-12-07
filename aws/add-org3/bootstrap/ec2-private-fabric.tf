@@ -51,6 +51,9 @@ resource "null_resource" "vm0-provisioner" {
 			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
 			"docker network create ${var.docker_network}",
 			"echo DOCKER_NETWORK=${var.docker_network} >> /tmp/.env",
+			"sudo docker pull hyperledger/fabric-ccenv:latest",
+			"sudo docker pull hyperledger/fabric-javaenv:latest",
+			"sudo docker pull hyperledger/fabric-baseos:amd64-0.4.18",
 			"pushd /tmp ; docker-compose -f /tmp/vm0.yaml up -d ; popd",
 		]
 	}
@@ -72,16 +75,19 @@ resource "null_resource" "vm1-provisioner" {
 
 	provisioner "remote-exec" {
 		inline = [
-		"echo GW0_PRIV_IP=${aws_instance.gw0.private_ip} >> /tmp/.env" ,
-		"echo GW1_PRIV_IP=${aws_instance.gw1.private_ip} >> /tmp/.env" ,
-		"echo VM0_PRIV_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
-		"echo VM1_PRIV_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
-		"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
-		"sudo chmod +x /usr/local/bin/docker-compose",
-		"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
-		"docker network create ${var.docker_network}",
-		"echo DOCKER_NETWORK=${var.docker_network} >> /tmp/.env",
-	 	"pushd /tmp ; docker-compose -f /tmp/vm1.yaml up -d ; popd",
+			"echo GW0_PRIV_IP=${aws_instance.gw0.private_ip} >> /tmp/.env" ,
+			"echo GW1_PRIV_IP=${aws_instance.gw1.private_ip} >> /tmp/.env" ,
+			"echo VM0_PRIV_IP=${aws_instance.vm0.private_ip} >> /tmp/.env" ,
+			"echo VM1_PRIV_IP=${aws_instance.vm1.private_ip} >> /tmp/.env" ,
+			"sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+			"sudo chmod +x /usr/local/bin/docker-compose",
+			"sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose",
+			"docker network create ${var.docker_network}",
+			"echo DOCKER_NETWORK=${var.docker_network} >> /tmp/.env",
+			"sudo docker pull hyperledger/fabric-ccenv:latest",
+			"sudo docker pull hyperledger/fabric-javaenv:latest",
+			"sudo docker pull hyperledger/fabric-baseos:amd64-0.4.18",
+	 		"pushd /tmp ; docker-compose -f /tmp/vm1.yaml up -d ; popd",
     	] 
 	}
 }

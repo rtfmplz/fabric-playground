@@ -34,7 +34,7 @@ if [ -z "${ORDERER_ORG_DOMAIN}" ]; then
 fi
 
 FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
-DAPPS_RESOURCES_DIR="${PWD}/cli-tools"
+CLI_RESOURCES_DIR="${PWD}/cli-tools"
 NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 CRYPTO_CONFIG_FILE="crypto.yaml"
 ORDERER_TLS_CA_CERT_FILE="tlsca.ordererorg-cert.pem"
@@ -95,10 +95,10 @@ EOF
 ##############################################################
 if [ -e ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ]; then
   rm -rf ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
-  rm -rf ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
+  rm -rf ${CLI_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
 fi
 cryptogen generate --config=${CRYPTO_CONFIG_FILE} --output=${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
-cp -avR ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ${DAPPS_RESOURCES_DIR}
+cp -avR ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ${CLI_RESOURCES_DIR}
 sleep ${INTERVAL}
 
 #############################################################
@@ -106,8 +106,8 @@ sleep ${INTERVAL}
 ##############################################################
 mkdir -p ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
 cp ${ORDERER_TLS_CA_CERT_FILE} ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
-mkdir -p ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
-cp ${ORDERER_TLS_CA_CERT_FILE} ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
+mkdir -p ${CLI_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
+cp ${ORDERER_TLS_CA_CERT_FILE} ${CLI_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}
 sleep ${INTERVAL}
 
 ##############################################################
@@ -163,14 +163,19 @@ sleep ${INTERVAL}
 # Bootstrap network
 ##############################################################
 pushd bootstrap
+
 terraform init
 terraform apply -auto-approve
+# replace route-table of private-subnet
+sed -i.bak 's/public/private/g' n-private-subnet.tf
+terraform apply -auto-approve
+
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org3
-# echo "aws_instance.admin.public_ip" | terraform console > ../artifacts/admin-ec2-public-ip.org3
+
 popd
 
-rm -rf ${DAPPS_RESOURCES_DIR}/.env
-cat << EOF >> ${DAPPS_RESOURCES_DIR}/.env
+rm -rf ${CLI_RESOURCES_DIR}/.env
+cat << EOF >> ${CLI_RESOURCES_DIR}/.env
 TEST_CHANNEL_NAME=${TEST_CHANNEL_NAME}
 TEST_CHAINCODE_NAME=${TEST_CHAINCODE_NAME}
 ORDERER_ORG_HOSTNAME=${ORDERER_ORG_HOSTNAME}

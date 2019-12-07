@@ -35,7 +35,7 @@ fi
 
 CHANNEL_CONF_TX="${TEST_CHANNEL_NAME}.tx"
 FABRIC_RESOURCES_DIR="${PWD}/bootstrap/resources/hyperledger"
-DAPPS_RESOURCES_DIR="${PWD}/cli-tools"
+CLI_RESOURCES_DIR="${PWD}/cli-tools"
 NGINX_RESOURCES_DIR="${PWD}/bootstrap/resources/nginx"
 GENESIS_BLOCK="genesis.block"
 ANCHOR_PEER_UPDATE_TX="updateAnchorOrg1.tx"
@@ -67,11 +67,11 @@ export FABRIC_CFG_PATH=${PWD}
 if [ -e ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR} ]; then
   rm -rf ${OUTPUT_CRYPTO_DIR}
   rm -rf ${FABRIC_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
-  rm -rf ${DAPPS_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
+  rm -rf ${CLI_RESOURCES_DIR}/${OUTPUT_CRYPTO_DIR}
 fi
 cryptogen generate --config=${CRYPTO_CONFIG_FILE} --output=./${OUTPUT_CRYPTO_DIR}
 cp -avR ${OUTPUT_CRYPTO_DIR} ${FABRIC_RESOURCES_DIR}
-cp -avR ${OUTPUT_CRYPTO_DIR} ${DAPPS_RESOURCES_DIR}
+cp -avR ${OUTPUT_CRYPTO_DIR} ${CLI_RESOURCES_DIR}
 sleep ${INTERVAL}
 
 ##############################################################
@@ -86,19 +86,19 @@ sleep ${INTERVAL}
 ##############################################################
 # Create channel configuration
 ##############################################################
-if [ -e ${DAPPS_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
-  rm -rf ${DAPPS_RESOURCES_DIR}/${CHANNEL_CONF_TX}
+if [ -e ${CLI_RESOURCES_DIR}/${CHANNEL_CONF_TX} ]; then
+  rm -rf ${CLI_RESOURCES_DIR}/${CHANNEL_CONF_TX}
 fi
-configtxgen -profile OrgsChannel -outputCreateChannelTx ${DAPPS_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${TEST_CHANNEL_NAME}
+configtxgen -profile OrgsChannel -outputCreateChannelTx ${CLI_RESOURCES_DIR}/${CHANNEL_CONF_TX} -channelID ${TEST_CHANNEL_NAME}
 sleep ${INTERVAL}
 
 ##############################################################
 # Create org1 anchor peer update configuration
 ##############################################################
-if [ -e ${DAPPS_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
-  rm -rf ${DAPPS_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
+if [ -e ${CLI_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} ]; then
+  rm -rf ${CLI_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX}
 fi
-configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${DAPPS_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${TEST_CHANNEL_NAME} -asOrg ${ORG_NAME}
+configtxgen -profile OrgsChannel -outputAnchorPeersUpdate ${CLI_RESOURCES_DIR}/${ANCHOR_PEER_UPDATE_TX} -channelID ${TEST_CHANNEL_NAME} -asOrg ${ORG_NAME}
 sleep ${INTERVAL}
 
 
@@ -151,13 +151,19 @@ cp ./${OUTPUT_CRYPTO_DIR}/${ORDERER_TLS_CA_CERT_DIR}/${ORDERER_TLS_CA_CERT_FILE}
 # Bootstrap network
 ##############################################################
 pushd bootstrap
+
 terraform init
 terraform apply -auto-approve
+# replace route-table of private-subnet
+sed -i.bak 's/public/private/g' n-private-subnet.tf
+terraform apply -auto-approve
+
 echo "aws_lb.public-load-balancer.dns_name" | terraform console > ../artifacts/public-load-balancer-dns-name.org1
+
 popd
 
-rm -rf ${DAPPS_RESOURCES_DIR}/.env
-cat << EOF >> ${DAPPS_RESOURCES_DIR}/.env
+rm -rf ${CLI_RESOURCES_DIR}/.env
+cat << EOF >> ${CLI_RESOURCES_DIR}/.env
 TEST_CHANNEL_NAME=${TEST_CHANNEL_NAME}
 TEST_CHAINCODE_NAME=${TEST_CHAINCODE_NAME}
 ORDERER_ORG_NAME=${ORDERER_ORG_NAME}
