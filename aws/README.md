@@ -62,7 +62,7 @@ cd first-network
 네트워크가 AWS 상에 모두 구성되면 cli(fabric-tools)를 통해서 Channel을 생성하고 chaincode를 설치한다.
 
 ```bash
-cd cli
+cd cli-tools
 docker-compose up -d
 docker exec -it cli.org1.example.com sh -c "./create_channel.sh"
 docker exec -it cli.org1.example.com sh -c "./install_chaincode.sh"
@@ -113,31 +113,31 @@ cd add-org3
 
 > `channel-artifact.json`, `public-load-balaancer-dns-name.org3`는 안전한 채널을 통해 HOST 조직에 전달되어야 하지만, 본 실습에서는 다음과 같이 폴더에 복사하는 것으로 갈음한다.  
 
-STEP 2에서 생성된 `channel-artifact.json`을 `first-network/dapps/` 경로 아래에 복사 한 후 `add-org3.sh` 실행해서 `org3.example.com`을 fabric-network에 포함시킨다.
-`admin-ec2-public-ip.org1`의 값을 인자로 `add-org3.sh` 스크립트를 실행한다.
+STEP 2에서 생성된 `channel-artifact.json`을 `first-network/cli-tools/` 경로 아래에 복사 한 후 `add-org3.sh` 실행해서 `org3.example.com`을 fabric-network에 포함시킨다.
 
 ```bash
-cd dapps
+cd cli-tools
 docker-compose up -d
-docker exec -it cli.org3.example.com sh -c "./add-org3.sh"
+docker exec -it cli.org1.example.com sh -c "./add-org3.sh"
 ```
 
 ## STEP 4. Join test-channel & chaincode install  
 
-STEP 3에 의해서 조직이 추가되고, 방화벽도 열리면 `admin-ec2-public-ip.org3`의 값을 인자로 `join-channel.sh` 스크립트를 실행한다.
+STEP 3에 의해서 조직이 추가되고, 방화벽도 열리면 `join-channel.sh` 스크립트를 실행한다.
 
 ```bash
+cd cli-tools
 docker-compose up -d
-docker exec -it cli.org1.example.com sh -c "./join-channel.sh"
+docker exec -it cli.org3.example.com sh -c "./join-channel.sh"
 ```
 
 ### STEP 5. Verification
 
 ```bash
-#docker exec -it cli.org3.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:57050 --tls true --cafile ${ORDERER_ORG_TLSCACERTS} -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
-#docker exec -it cli.org3.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
 docker exec -it cli.org1.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:57050 --tls true --cafile ${ORDERER_ORG_TLSCACERTS} -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
 docker exec -it cli.org1.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
+docker exec -it cli.org3.example.com sh -c "peer chaincode invoke -o orderer0.ordererorg:57050 --tls true --cafile ${ORDERER_ORG_TLSCACERTS} -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}'"
+docker exec -it cli.org3.example.com sh -c "peer chaincode query -C ${TEST_CHANNEL_NAME} -n ${TEST_CHAINCODE_NAME} -c '{\"Args\":[\"query\",\"a\"]}'"
 ```
 
 ## Appendix 1. Terraform 관련 추가
