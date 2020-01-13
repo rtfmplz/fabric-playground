@@ -6,7 +6,7 @@
 
 if [ -z $1 ]; then
   echo "CHANNEL_NAME is ch1 (default test channel)"
-  exit 1
+  CHANNEL_NAME=${TEST_CHANNEL_NAME}
 else
   echo "CHANNEL_NAME is $1"
   CHANNEL_NAME=$1
