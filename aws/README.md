@@ -55,6 +55,7 @@ export ORDERER_ORG_NAME="OrdererOrg"
 export ORDERER_ORG_DOMAIN="ordererorg"
 export TEST_CHANNEL_NAME="ch1"
 export TEST_CHAINCODE_NAME="mycc"
+export ORDERER_ORG_TLSCACERTS="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/ordererorg/msp/tlscacerts/tlsca.ordererorg-cert.pem"
 cd first-network
 ./bootstrap.sh
 ```
@@ -98,6 +99,7 @@ export HOST_ORG_DOMAIN="org1.example.com"
 export ORDERER_ORG_DOMAIN="ordererorg"
 export TEST_CHANNEL_NAME="ch1"
 export TEST_CHAINCODE_NAME="mycc"
+export ORDERER_ORG_TLSCACERTS="/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/ordererorg/msp/tlscacerts/tlsca.ordererorg-cert.pem"
 cd add-org3
 ./bootstrap.sh
 ```
