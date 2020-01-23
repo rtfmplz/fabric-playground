@@ -8,7 +8,7 @@ fi
 rm -rf ./channel-artifact.json
 popd
 
-pushd dapps
+pushd cli-tools
   rm -rf crypto
   rm -rf *.block
   rm -rf *.pb
@@ -23,6 +23,7 @@ if [ -e ./.terraform ]; then
     rm -rf terraform.tfstate
     rm -rf terraform.tfstate.backup
     rm -rf .terraform
+    mv n-private-subnet.tf.bak n-private-subnet.tf
 fi
 popd
 
