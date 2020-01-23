@@ -1,12 +1,3 @@
-pushd join-channel
-if [ -e ./.terraform ]; then
-    terraform destroy -auto-approve
-    rm -rf terraform.tfstate
-    rm -rf terraform.tfstate.backup
-    rm -rf .terraform
-fi
-rm -rf ./channel-artifact.json
-popd
 
 pushd cli-tools
   rm -rf crypto
