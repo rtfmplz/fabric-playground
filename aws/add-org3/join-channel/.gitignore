@@ -1,3 +1,0 @@
-*.tfstate*
-channel-artifact.json
-.terraform
